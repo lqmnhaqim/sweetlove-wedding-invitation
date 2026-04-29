@@ -6,11 +6,61 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  background:
-    radial-gradient(ellipse at 25% 20%, rgba(232, 200, 192, 0.55), transparent 55%),
-    radial-gradient(ellipse at 75% 80%, rgba(240, 217, 210, 0.55), transparent 55%),
-    var(--color-bg);
+  background: var(--color-bg);
   overflow: hidden;
+  isolation: isolate;
+}
+
+/* Layer 1 — optional photo (admin configurable) or painterly fallback */
+.photo {
+  position: absolute;
+  inset: 0;
+  background-color: #d8b9ad;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -3;
+}
+
+/* Built-in painterly background using stacked radial gradients
+   (no external image dependency, evokes a soft floral photograph). */
+.photoFallback {
+  background-image:
+    radial-gradient(circle at 22% 18%, rgba(255, 220, 210, 0.85) 0%, transparent 28%),
+    radial-gradient(circle at 78% 12%, rgba(232, 200, 192, 0.95) 0%, transparent 32%),
+    radial-gradient(circle at 88% 70%, rgba(168, 106, 94, 0.45) 0%, transparent 38%),
+    radial-gradient(circle at 12% 78%, rgba(196, 130, 116, 0.5) 0%, transparent 36%),
+    radial-gradient(circle at 50% 50%, rgba(232, 200, 192, 0.55) 0%, transparent 55%),
+    radial-gradient(circle at 35% 38%, rgba(255, 240, 232, 0.6) 0%, transparent 24%),
+    radial-gradient(circle at 65% 62%, rgba(180, 110, 96, 0.35) 0%, transparent 28%),
+    linear-gradient(135deg, #e6b8ab 0%, #c98c80 55%, #a0685c 100%);
+}
+
+/* Layer 2 — soft warm wash + vignette to keep the names legible */
+.wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(246, 237, 228, 0.55) 0%, transparent 65%),
+    radial-gradient(ellipse at 50% 100%, rgba(58, 46, 42, 0.18) 0%, transparent 65%),
+    radial-gradient(ellipse at 50% 0%, rgba(246, 237, 228, 0.35) 0%, transparent 60%);
+  z-index: -2;
+}
+
+/* Layer 3 — decorative botanical SVG corners */
+.botanicCorner {
+  position: absolute;
+  width: clamp(180px, 26vw, 320px);
+  z-index: -1;
+  color: var(--color-rose-dark);
+  opacity: 0.45;
+}
+
+.botanicCorner.tl { top: 36px; left: 12px; transform: rotate(-12deg); }
+.botanicCorner.br { bottom: 36px; right: 12px; transform: rotate(168deg); }
+
+@media (max-width: 720px) {
+  .botanicCorner { display: none; }
 }
 
 .inner {
@@ -25,6 +75,7 @@
   color: var(--color-rose-dark);
   line-height: 1;
   margin-bottom: 12px;
+  text-shadow: 0 1px 12px rgba(255, 248, 240, 0.4);
 }
 
 .names {
@@ -33,6 +84,7 @@
   font-size: clamp(3rem, 11vw, 7.5rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
+  text-shadow: 0 2px 30px rgba(255, 248, 240, 0.5);
 }
 
 .amp {
@@ -76,12 +128,12 @@
 }
 
 .timeBox {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
   border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 16px 8px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--shadow-sm);
 }
 
@@ -121,7 +173,7 @@
   width: 1px;
   height: 50px;
   background: linear-gradient(to bottom, var(--color-rose) 0%, transparent 100%);
-  animation: drop 2s ease-in-out infinite;
+  animation: drop 2.4s ease-in-out infinite;
 }
 
 @keyframes drop {

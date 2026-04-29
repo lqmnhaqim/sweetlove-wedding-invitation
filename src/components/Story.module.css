@@ -41,20 +41,29 @@
 
 .dot {
   position: absolute;
-  top: 42px;
-  width: 14px;
-  height: 14px;
+  top: 32px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
-  background: var(--color-rose);
-  box-shadow: 0 0 0 4px var(--color-bg-soft), 0 0 0 5px var(--color-rose-soft);
+  background: var(--color-bg-soft);
+  color: var(--color-rose-dark);
+  box-shadow: 0 0 0 1px var(--color-line), 0 4px 12px rgba(58, 46, 42, 0.08);
 }
 
 .entry.left .dot {
-  right: -7px;
+  right: -19px;
 }
 
 .entry.right .dot {
-  left: -7px;
+  left: -19px;
+}
+
+.dot svg {
+  width: 22px;
+  height: 22px;
 }
 
 .year {
@@ -93,7 +102,7 @@
 
   .entry.left .dot,
   .entry.right .dot {
-    left: 9px;
+    left: -3px;
     right: auto;
   }
 

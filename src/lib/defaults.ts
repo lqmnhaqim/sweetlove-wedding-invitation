@@ -8,6 +8,7 @@ export const defaultContent: InvitationContent = {
     weddingDate: "2026-11-22",
     rsvpDeadline: "2026-10-22",
     tagline: "We're Getting Married",
+    heroImageUrl: "",
   },
   story: [
     {

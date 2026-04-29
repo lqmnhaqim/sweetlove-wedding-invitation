@@ -16,6 +16,7 @@ export const coupleSchema = z.object({
   weddingDate: z.string().trim().min(1),
   rsvpDeadline: z.string().trim().min(1),
   tagline: z.string().trim().min(1).max(120),
+  heroImageUrl: z.string().trim().max(800).optional().default(""),
 });
 
 export const storyEntrySchema = z.object({

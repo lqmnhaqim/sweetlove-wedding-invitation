@@ -7,6 +7,7 @@ export interface CoupleInfo {
   weddingDate: string;
   rsvpDeadline: string;
   tagline: string;
+  heroImageUrl: string;
 }
 
 export interface StoryEntry {

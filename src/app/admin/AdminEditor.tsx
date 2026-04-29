@@ -74,6 +74,18 @@ function CoupleEditor({ draft, setDraft }: EditorProps) {
           <input type="date" value={c.rsvpDeadline} onChange={(e) => upd({ rsvpDeadline: e.target.value })} />
         </div>
       </div>
+      <div className="form-field" style={{ marginTop: 16 }}>
+        <label>Hero Background Image URL (optional)</label>
+        <input
+          type="url"
+          placeholder="https://..."
+          value={c.heroImageUrl}
+          onChange={(e) => upd({ heroImageUrl: e.target.value })}
+        />
+        <span className="muted" style={{ fontSize: "0.85rem" }}>
+          Paste a URL to a photo to use as the hero background. Leave empty to use the painterly default.
+        </span>
+      </div>
     </div>
   );
 }
