@@ -417,7 +417,17 @@ function TravelEditor({ draft, setDraft }: EditorProps) {
   const upd = (patch: Partial<typeof t>) => setDraft({ ...draft, travel: { ...t, ...patch } });
   const setHotels = (hotels: Hotel[]) => upd({ hotels });
   const [thingsRaw, setThingsRaw] = useState(t.thingsToDo.join(", "));
-  useEffect(() => { setThingsRaw(t.thingsToDo.join(", ")); }, [t.thingsToDo]);
+  useEffect(() => {
+    // Only sync from external changes (e.g. Reset). Skip when the parent array
+    // already matches what the current raw input would parse to — otherwise the
+    // input strips trailing commas/whitespace as the user types.
+    const parsed = thingsRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    const same =
+      parsed.length === t.thingsToDo.length &&
+      parsed.every((v, i) => v === t.thingsToDo[i]);
+    if (!same) setThingsRaw(t.thingsToDo.join(", "));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t.thingsToDo]);
 
   return (
     <div className={styles.panel}>
