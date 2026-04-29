@@ -22,8 +22,10 @@ interface CountdownParts {
 }
 
 function getParts(target: Date): CountdownParts {
+  const zero = { months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  if (isNaN(target.getTime())) return zero;
   const now = new Date();
-  if (target <= now) return { months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  if (target <= now) return zero;
   const d = intervalToDuration({ start: now, end: target });
   return {
     months: (d.years ?? 0) * 12 + (d.months ?? 0),
@@ -125,6 +127,7 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
     let t: Date;
     try {
       t = parseISO(couple.weddingDate);
+      if (isNaN(t.getTime())) t = new Date();
     } catch {
       t = new Date();
     }
@@ -134,11 +137,20 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
     return () => clearInterval(id);
   }, [couple.weddingDate]);
 
-  const monthLabel = target ? format(target, "MMMM").toUpperCase() : "";
-  const day = target ? Number(format(target, "d")) : 0;
+  const safeFormat = (d: Date | null, pattern: string) => {
+    if (!d || isNaN(d.getTime())) return "";
+    try {
+      return format(d, pattern);
+    } catch {
+      return "";
+    }
+  };
+
+  const monthLabel = safeFormat(target, "MMMM").toUpperCase();
+  const day = Number(safeFormat(target, "d")) || 0;
   const dayPrev = day > 1 ? day - 1 : "";
-  const dayNext = day + 1;
-  const weekday = target ? format(target, "EEEE") : "";
+  const dayNext = day > 0 ? day + 1 : "";
+  const weekday = safeFormat(target, "EEEE");
 
   const eventTitle = `${couple.bride} & ${couple.groom} — Wedding`;
   const ceremonyDate = (() => {
