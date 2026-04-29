@@ -44,25 +44,35 @@ export function AdminEditor({ tab, draft, setDraft }: AdminEditorProps) {
 
 function CoupleEditor({ draft, setDraft }: EditorProps) {
   const c = draft.couple;
+  const r = draft.reception;
   const upd = (patch: Partial<typeof c>) => setDraft({ ...draft, couple: { ...c, ...patch } });
+  const updR = (patch: Partial<typeof r>) => setDraft({ ...draft, reception: { ...r, ...patch } });
   return (
     <div className={styles.panel}>
       <div className={styles.panelHeader}><h2>Couple & Date</h2></div>
       <div className={styles.grid2}>
         <div className="form-field">
-          <label>Bride / Partner 1</label>
+          <label>Bride / Partner 1 (display name)</label>
           <input value={c.bride} onChange={(e) => upd({ bride: e.target.value })} />
         </div>
         <div className="form-field">
-          <label>Groom / Partner 2</label>
+          <label>Groom / Partner 2 (display name)</label>
           <input value={c.groom} onChange={(e) => upd({ groom: e.target.value })} />
+        </div>
+        <div className="form-field">
+          <label>Bride full name (Wedding Reception card)</label>
+          <input value={c.brideFullName} onChange={(e) => upd({ brideFullName: e.target.value })} />
+        </div>
+        <div className="form-field">
+          <label>Groom full name (Wedding Reception card)</label>
+          <input value={c.groomFullName} onChange={(e) => upd({ groomFullName: e.target.value })} />
         </div>
         <div className="form-field">
           <label>Monogram</label>
           <input value={c.monogram} onChange={(e) => upd({ monogram: e.target.value })} />
         </div>
         <div className="form-field">
-          <label>Tagline</label>
+          <label>Tagline (Hero eyebrow)</label>
           <input value={c.tagline} onChange={(e) => upd({ tagline: e.target.value })} />
         </div>
         <div className="form-field">
@@ -83,8 +93,24 @@ function CoupleEditor({ draft, setDraft }: EditorProps) {
           onChange={(e) => upd({ heroImageUrl: e.target.value })}
         />
         <span className="muted" style={{ fontSize: "0.85rem" }}>
-          Paste a URL to a photo to use as the hero background. Leave empty to use the painterly default.
+          Paste a URL to a photo to use as a soft wash behind the hero. Leave empty for the parchment default.
         </span>
+      </div>
+
+      <h3 style={{ marginTop: 28, marginBottom: 12 }}>Wedding Reception Card</h3>
+      <div className={styles.grid2}>
+        <div className="form-field">
+          <label>Bride&apos;s parents</label>
+          <input value={r.brideParents} onChange={(e) => updR({ brideParents: e.target.value })} />
+        </div>
+        <div className="form-field">
+          <label>Groom&apos;s parents</label>
+          <input value={r.groomParents} onChange={(e) => updR({ groomParents: e.target.value })} />
+        </div>
+      </div>
+      <div className="form-field" style={{ marginTop: 12 }}>
+        <label>Greeting / Invitation message</label>
+        <textarea rows={3} value={r.greeting} onChange={(e) => updR({ greeting: e.target.value })} />
       </div>
     </div>
   );
@@ -283,7 +309,106 @@ function EventEditor({ draft, setDraft }: EditorProps) {
           <input value={dc.description} onChange={(e) => updDc({ description: e.target.value })} />
         </div>
       </div>
+
+      <AttireFields draft={draft} setDraft={setDraft} />
     </div>
+  );
+}
+
+function AttireFields({ draft, setDraft }: EditorProps) {
+  const a = draft.attire;
+  const upd = (patch: Partial<typeof a>) => setDraft({ ...draft, attire: { ...a, ...patch } });
+  const updColors = (next: typeof a.colorsToAvoid) => upd({ colorsToAvoid: next });
+
+  return (
+    <>
+      <h3 style={{ marginTop: 28, marginBottom: 12 }}>Attire Guide (extended)</h3>
+      <div className={styles.grid2}>
+        <div className="form-field">
+          <label>Title</label>
+          <input value={a.title} onChange={(e) => upd({ title: e.target.value })} />
+        </div>
+        <div className="form-field">
+          <label>Colours-to-avoid label</label>
+          <input value={a.colorsToAvoidLabel} onChange={(e) => upd({ colorsToAvoidLabel: e.target.value })} />
+        </div>
+      </div>
+      <div className="form-field" style={{ marginTop: 12 }}>
+        <label>Description</label>
+        <textarea rows={2} value={a.description} onChange={(e) => upd({ description: e.target.value })} />
+      </div>
+      <div className="form-field" style={{ marginTop: 12 }}>
+        <label>Note (shown in dashed box)</label>
+        <textarea rows={3} value={a.note} onChange={(e) => upd({ note: e.target.value })} />
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <div className={styles.panelHeader}>
+          <h3 style={{ margin: 0 }}>Colours to Avoid</h3>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() =>
+              updColors([
+                ...a.colorsToAvoid,
+                { id: genId("c"), name: "New Colour", hex: "#888888" },
+              ])
+            }
+          >
+            <Plus size={16} /> Add Colour
+          </button>
+        </div>
+        {a.colorsToAvoid.map((c, idx) => (
+          <div key={c.id} className={styles.itemCard}>
+            <div className={styles.grid2}>
+              <div className="form-field">
+                <label>Name</label>
+                <input
+                  value={c.name}
+                  onChange={(e) => {
+                    const next = [...a.colorsToAvoid];
+                    next[idx] = { ...c, name: e.target.value };
+                    updColors(next);
+                  }}
+                />
+              </div>
+              <div className="form-field">
+                <label>Hex (e.g. #2f4a1e)</label>
+                <input
+                  value={c.hex}
+                  onChange={(e) => {
+                    const next = [...a.colorsToAvoid];
+                    next[idx] = { ...c, hex: e.target.value };
+                    updColors(next);
+                  }}
+                />
+              </div>
+            </div>
+            <div className={styles.barActions} style={{ marginTop: 8 }}>
+              <span
+                aria-hidden="true"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 999,
+                  border: "1px solid var(--color-border)",
+                  backgroundColor: c.hex,
+                  display: "inline-block",
+                }}
+              />
+              <button
+                type="button"
+                className={`${styles.iconBtn} ${styles.danger}`}
+                aria-label="Delete colour"
+                onClick={() => updColors(a.colorsToAvoid.filter((_, i) => i !== idx))}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 

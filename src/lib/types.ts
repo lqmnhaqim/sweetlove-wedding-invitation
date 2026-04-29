@@ -3,11 +3,27 @@ export type Locale = "en" | "fr";
 export interface CoupleInfo {
   bride: string;
   groom: string;
+  brideFullName: string;
+  groomFullName: string;
   monogram: string;
   weddingDate: string;
   rsvpDeadline: string;
   tagline: string;
   heroImageUrl: string;
+}
+
+export interface WeddingReception {
+  brideParents: string;
+  groomParents: string;
+  greeting: string;
+}
+
+export interface AttireGuide {
+  title: string;
+  description: string;
+  colorsToAvoidLabel: string;
+  colorsToAvoid: { id: string; name: string; hex: string }[];
+  note: string;
 }
 
 export interface StoryEntry {
@@ -67,11 +83,13 @@ export interface GiftInfo {
 
 export interface InvitationContent {
   couple: CoupleInfo;
+  reception: WeddingReception;
   story: StoryEntry[];
   program: ProgramEntry[];
   gift: GiftInfo;
   ceremony: EventVenue;
   dressCode: DressCode;
+  attire: AttireGuide;
   travel: TravelInfo;
   adminPin: string;
 }

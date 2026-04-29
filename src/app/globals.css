@@ -1,19 +1,23 @@
 :root {
-  /* Palette — warm cream, dusty rose, blush */
-  --color-bg: #f6ede4;
-  --color-bg-soft: #fbf5ee;
-  --color-card: #ffffff;
-  --color-rose: #c98c80;
-  --color-rose-dark: #a86a5e;
-  --color-rose-soft: #e8c8c0;
-  --color-blush: #f0d9d2;
-  --color-text: #3a2e2a;
-  --color-text-muted: #8a756c;
-  --color-border: #e8d9d0;
-  --color-line: #d8c5b9;
-  --shadow-sm: 0 1px 2px rgba(58, 46, 42, 0.06);
-  --shadow-md: 0 8px 28px rgba(58, 46, 42, 0.10);
-  --shadow-lg: 0 24px 60px rgba(58, 46, 42, 0.16);
+  /* Palette — cream parchment, burgundy hearts, olive green */
+  --color-bg: #f4ecd8;
+  --color-bg-soft: #fbf5e4;
+  --color-card: #fcf6e6;
+  --color-rose: #8c1d1d;          /* deep burgundy (primary accent / hearts) */
+  --color-rose-dark: #6b1414;
+  --color-rose-soft: #d8a89a;
+  --color-blush: #ecd6cc;
+  --color-olive: #4a5d2a;         /* dark olive (buttons) */
+  --color-olive-dark: #354121;
+  --color-olive-soft: #b9c08a;
+  --color-heart: #8c1d1d;
+  --color-text: #2b1d1a;
+  --color-text-muted: #6e5c52;
+  --color-border: #e3d3bd;
+  --color-line: #c9b29a;
+  --shadow-sm: 0 1px 2px rgba(43, 29, 26, 0.07);
+  --shadow-md: 0 8px 28px rgba(43, 29, 26, 0.10);
+  --shadow-lg: 0 24px 60px rgba(43, 29, 26, 0.16);
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 24px;
@@ -94,7 +98,7 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.3; }
 .section-eyebrow {
   display: block;
   font-family: var(--font-script);
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-size: clamp(2rem, 3.5vw, 3rem);
   color: var(--color-rose);
   text-align: center;
   line-height: 1;
@@ -137,30 +141,49 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.3; }
   height: 24px;
 }
 
-/* Buttons */
+/* Tiny caps eyebrow (uppercase, letter-spaced) used above section headers in the Figma look. */
+.section-eyebrow-caps {
+  display: block;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 18px;
+}
+
+/* Buttons — default is olive green pill (Figma look) */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 14px 32px;
+  padding: 13px 30px;
   border: 1px solid transparent;
   border-radius: 999px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   transition: transform 200ms ease, background 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
-  background: var(--color-rose);
+  background: var(--color-olive);
   color: #fff;
   box-shadow: var(--shadow-sm);
 }
 
 .btn:hover {
-  background: var(--color-rose-dark);
+  background: var(--color-olive-dark);
   color: #fff;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+.btn-rose {
+  background: var(--color-rose);
+}
+
+.btn-rose:hover {
+  background: var(--color-rose-dark);
 }
 
 .btn-outline {
@@ -223,6 +246,12 @@ h3 { font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.3; }
   color: var(--color-rose-soft);
   opacity: 0.65;
   animation: drift 14s linear infinite;
+}
+
+/* Floating / pulsing scattered hearts (decorative). */
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1) rotate(var(--rot, 0deg)); opacity: 0.85; }
+  50% { transform: scale(1.08) rotate(var(--rot, 0deg)); opacity: 1; }
 }
 
 /* Form */

@@ -4,11 +4,19 @@ export const defaultContent: InvitationContent = {
   couple: {
     bride: "Sweet",
     groom: "Love",
+    brideFullName: "Sweet Binti Anonymous",
+    groomFullName: "Love Bin Anonymous",
     monogram: "S&L",
     weddingDate: "2026-11-22",
     rsvpDeadline: "2026-10-22",
-    tagline: "We're Getting Married",
+    tagline: "The Wedding Of",
     heroImageUrl: "",
+  },
+  reception: {
+    brideParents: "Mr. Anonymous & Mrs. Anonymous",
+    groomParents: "Mr. Anonymous & Mrs. Anonymous",
+    greeting:
+      "With joy and gratitude, we warmly invite Mr/Mrs/Encik/Puan/Dato'/Datin and family to celebrate the wedding of our beloved children with us.",
   },
   story: [
     {
@@ -67,6 +75,19 @@ export const defaultContent: InvitationContent = {
   dressCode: {
     title: "Formal — Black Tie Optional",
     description: "We kindly invite our guests to dress elegantly for the occasion.",
+  },
+  attire: {
+    title: "Attire Guide",
+    description:
+      "Dress Code: Formal / Traditional / Batik (linen, jersey toilette, and slippers are not allowed).",
+    colorsToAvoidLabel: "Colours to Avoid",
+    colorsToAvoid: [
+      { id: "c-1", name: "Forest Green", hex: "#2f4a1e" },
+      { id: "c-2", name: "Beige / Tan", hex: "#c2a888" },
+      { id: "c-3", name: "Sage Green", hex: "#a3b682" },
+    ],
+    note:
+      "We've reserved certain colours for the bride, groom, and both families. To keep things special, we'd truly appreciate if you could avoid these shades on our big day. Thank you for your understanding lovelies!",
   },
   travel: {
     hotels: [

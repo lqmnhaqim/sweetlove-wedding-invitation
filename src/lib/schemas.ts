@@ -12,11 +12,33 @@ export type RsvpInput = z.infer<typeof rsvpSchema>;
 export const coupleSchema = z.object({
   bride: z.string().trim().min(1).max(60),
   groom: z.string().trim().min(1).max(60),
+  brideFullName: z.string().trim().max(160).optional().default(""),
+  groomFullName: z.string().trim().max(160).optional().default(""),
   monogram: z.string().trim().min(1).max(10),
   weddingDate: z.string().trim().min(1),
   rsvpDeadline: z.string().trim().min(1),
   tagline: z.string().trim().min(1).max(120),
   heroImageUrl: z.string().trim().max(800).optional().default(""),
+});
+
+export const receptionSchema = z.object({
+  brideParents: z.string().trim().max(240).optional().default(""),
+  groomParents: z.string().trim().max(240).optional().default(""),
+  greeting: z.string().trim().max(800).optional().default(""),
+});
+
+export const attireColorSchema = z.object({
+  id: z.string(),
+  name: z.string().trim().max(80),
+  hex: z.string().trim().max(20),
+});
+
+export const attireSchema = z.object({
+  title: z.string().trim().max(120).optional().default(""),
+  description: z.string().trim().max(800).optional().default(""),
+  colorsToAvoidLabel: z.string().trim().max(120).optional().default(""),
+  colorsToAvoid: z.array(attireColorSchema).default([]),
+  note: z.string().trim().max(800).optional().default(""),
 });
 
 export const storyEntrySchema = z.object({
@@ -76,11 +98,23 @@ export const travelSchema = z.object({
 
 export const invitationContentSchema = z.object({
   couple: coupleSchema,
+  reception: receptionSchema.optional().default({
+    brideParents: "",
+    groomParents: "",
+    greeting: "",
+  }),
   story: z.array(storyEntrySchema),
   program: z.array(programEntrySchema),
   gift: giftSchema,
   ceremony: ceremonySchema,
   dressCode: dressCodeSchema,
+  attire: attireSchema.optional().default({
+    title: "Attire Guide",
+    description: "",
+    colorsToAvoidLabel: "Colours to Avoid",
+    colorsToAvoid: [],
+    note: "",
+  }),
   travel: travelSchema,
   adminPin: z.string().trim().min(1).max(60),
 });
