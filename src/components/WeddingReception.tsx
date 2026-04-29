@@ -3,6 +3,7 @@
 import type { CoupleInfo, WeddingReception as WeddingReceptionType } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Hearts } from "./Hearts";
+import { useLocale } from "@/lib/i18n";
 import styles from "./WeddingReception.module.css";
 
 interface WeddingReceptionProps {
@@ -11,6 +12,7 @@ interface WeddingReceptionProps {
 }
 
 export function WeddingReception({ reception, couple }: WeddingReceptionProps) {
+  const { t } = useLocale();
   return (
     <section className={styles.section} id="reception">
       <Hearts count={10} spread={{ top: 0.05, bottom: 0.95 }} />
@@ -18,7 +20,7 @@ export function WeddingReception({ reception, couple }: WeddingReceptionProps) {
       <div className="container">
         <Reveal>
           <div className={styles.card}>
-            <p className={styles.eyebrow}>Wedding Reception</p>
+            <p className={styles.eyebrow}>{t("reception.eyebrow")}</p>
 
             {reception.brideParents && (
               <p className={styles.parents}>{reception.brideParents}</p>

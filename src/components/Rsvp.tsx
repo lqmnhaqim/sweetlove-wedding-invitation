@@ -8,6 +8,7 @@ import { appendRsvp } from "@/lib/store";
 import type { RsvpEntry } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
+import { useLocale } from "@/lib/i18n";
 import styles from "./Rsvp.module.css";
 
 interface RsvpProps {
@@ -28,10 +29,13 @@ export function Rsvp({ rsvpDeadline }: RsvpProps) {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const { t, dateLocale } = useLocale();
 
   const formattedDeadline = (() => {
     try {
-      return format(parseISO(rsvpDeadline), "MMMM d, yyyy");
+      const d = parseISO(rsvpDeadline);
+      if (isNaN(d.getTime())) return rsvpDeadline;
+      return format(d, "d MMMM yyyy", { locale: dateLocale });
     } catch {
       return rsvpDeadline;
     }
@@ -66,11 +70,11 @@ export function Rsvp({ rsvpDeadline }: RsvpProps) {
     <section className={`section ${styles.section}`} id="rsvp">
       <div className="container">
         <Reveal>
-          <span className="section-eyebrow">Be Our Guest</span>
-          <h2 className="section-title">RSVP</h2>
+          <span className="section-eyebrow">{t("rsvp.eyebrow")}</span>
+          <h2 className="section-title">{t("rsvp.title")}</h2>
           <Ornament />
           <p className={styles.deadline}>
-            Please let us know by {formattedDeadline}.
+            {t("rsvp.deadline", { date: formattedDeadline })}
           </p>
         </Reveal>
 
@@ -81,13 +85,13 @@ export function Rsvp({ rsvpDeadline }: RsvpProps) {
                 <span className={styles.successIcon}>
                   <Heart size={26} />
                 </span>
-                <h3>Thank You</h3>
-                <p>Your response has been received. We can't wait to share this day with you.</p>
+                <h3>{t("rsvp.thanks")}</h3>
+                <p>{t("rsvp.thanksBody")}</p>
               </div>
             ) : (
               <div className={styles.row}>
                 <div className="form-field">
-                  <label htmlFor="fullName">Full Name</label>
+                  <label htmlFor="fullName">{t("rsvp.fullName")}</label>
                   <input
                     id="fullName"
                     type="text"
@@ -99,7 +103,7 @@ export function Rsvp({ rsvpDeadline }: RsvpProps) {
                 </div>
 
                 <div className="form-field">
-                  <label htmlFor="email">Email Address</label>
+                  <label htmlFor="email">{t("rsvp.email")}</label>
                   <input
                     id="email"
                     type="email"
@@ -111,28 +115,28 @@ export function Rsvp({ rsvpDeadline }: RsvpProps) {
                 </div>
 
                 <div className="form-field">
-                  <label>Will you be attending?</label>
+                  <label>{t("rsvp.willYouAttend")}</label>
                   <div className={styles.attendingChoice}>
                     <button
                       type="button"
                       className={`${styles.choice} ${attending === "yes" ? styles.selected : ""}`}
                       onClick={() => setAttending("yes")}
                     >
-                      <Check size={16} /> Joyfully Accept
+                      <Check size={16} /> {t("rsvp.accept")}
                     </button>
                     <button
                       type="button"
                       className={`${styles.choice} ${attending === "no" ? styles.selected : ""}`}
                       onClick={() => setAttending("no")}
                     >
-                      <XIcon size={16} /> Regretfully Decline
+                      <XIcon size={16} /> {t("rsvp.decline")}
                     </button>
                   </div>
                   {errors.attending && <span className="form-error">{errors.attending}</span>}
                 </div>
 
                 <div className="form-field">
-                  <label htmlFor="message">Message for the Couple</label>
+                  <label htmlFor="message">{t("rsvp.message")}</label>
                   <textarea
                     id="message"
                     rows={4}
@@ -142,7 +146,7 @@ export function Rsvp({ rsvpDeadline }: RsvpProps) {
                 </div>
 
                 <button type="submit" className={`btn ${styles.submit}`}>
-                  Send RSVP
+                  {t("rsvp.send")}
                 </button>
               </div>
             )}

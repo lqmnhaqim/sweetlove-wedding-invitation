@@ -5,6 +5,7 @@ import { Gift, Wallet, Copy, Check } from "lucide-react";
 import type { GiftInfo } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
+import { useLocale } from "@/lib/i18n";
 import styles from "./Gifts.module.css";
 
 interface GiftsProps {
@@ -14,6 +15,7 @@ interface GiftsProps {
 export function Gifts({ gift }: GiftsProps) {
   const [showIban, setShowIban] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { t } = useLocale();
 
   const handleCopy = async () => {
     try {
@@ -29,8 +31,8 @@ export function Gifts({ gift }: GiftsProps) {
     <section className={`section ${styles.section}`} id="gifts">
       <div className="container">
         <Reveal>
-          <span className="section-eyebrow">With Love</span>
-          <h2 className="section-title">Gifts</h2>
+          <span className="section-eyebrow">{t("gifts.eyebrow")}</span>
+          <h2 className="section-title">{t("gifts.title")}</h2>
           <Ornament />
           <p className={styles.intro}>{gift.intro}</p>
         </Reveal>
@@ -44,12 +46,12 @@ export function Gifts({ gift }: GiftsProps) {
 
           <Reveal className={styles.card} delay={160}>
             <span className={styles.icon}><Wallet size={22} /></span>
-            <h3 className={styles.label}>Bank Transfer</h3>
+            <h3 className={styles.label}>{t("gifts.bankTransfer")}</h3>
             <p className={styles.desc}>{gift.bankNote}</p>
 
             {!showIban ? (
               <button type="button" className="btn btn-outline" onClick={() => setShowIban(true)}>
-                Show IBAN
+                {t("gifts.showIban")}
               </button>
             ) : (
               <>
@@ -61,7 +63,7 @@ export function Gifts({ gift }: GiftsProps) {
                   style={{ marginTop: 12 }}
                 >
                   {copied ? <Check size={16} /> : <Copy size={16} />}
-                  {copied ? "Copied" : "Copy"}
+                  {copied ? t("gifts.copied") : t("gifts.copy")}
                 </button>
               </>
             )}

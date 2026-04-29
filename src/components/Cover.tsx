@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { useLocale } from "@/lib/i18n";
 import styles from "./Cover.module.css";
 
 interface CoverProps {
@@ -239,6 +240,7 @@ function SealSvg({ monogram }: SealSvgProps) {
 export function Cover({ monogram, inviteeName, onOpen }: CoverProps) {
   const [hidden, setHidden] = useState(false);
   const [removed, setRemoved] = useState(false);
+  const { t } = useLocale();
 
   useEffect(() => {
     if (!hidden) {
@@ -260,7 +262,7 @@ export function Cover({ monogram, inviteeName, onOpen }: CoverProps) {
   if (removed) return null;
 
   return (
-    <div className={`${styles.cover} ${hidden ? styles.dismissed : ""}`} role="dialog" aria-label="Wedding invitation cover">
+    <div className={`${styles.cover} ${hidden ? styles.dismissed : ""}`} role="dialog" aria-label={t("cover.dialogLabel")}>
       <PaperTexture />
       <FloralPattern />
       <div className={styles.flapLines} />
@@ -270,9 +272,9 @@ export function Cover({ monogram, inviteeName, onOpen }: CoverProps) {
       </div>
 
       <div className={styles.coverContent}>
-        <span className={styles.invited}>You're Invited</span>
+        <span className={styles.invited}>{t("cover.youreInvited")}</span>
         <span className={styles.eyebrow}>
-          {inviteeName ? `Dear ${inviteeName},` : "Dear Friend,"}
+          {inviteeName ? t("cover.dearName", { name: inviteeName }) : t("cover.dearFriend")}
         </span>
         <button
           type="button"
@@ -282,7 +284,7 @@ export function Cover({ monogram, inviteeName, onOpen }: CoverProps) {
             onOpen?.();
           }}
         >
-          Open Invitation
+          {t("cover.openInvitation")}
         </button>
       </div>
     </div>

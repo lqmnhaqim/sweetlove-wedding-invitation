@@ -1,15 +1,21 @@
+"use client";
+
 import { Heart } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import type { CoupleInfo } from "@/lib/types";
+import { useLocale } from "@/lib/i18n";
 
 interface FooterProps {
   couple: CoupleInfo;
 }
 
 export function Footer({ couple }: FooterProps) {
+  const { t, dateLocale } = useLocale();
   const dateStr = (() => {
     try {
-      return format(parseISO(couple.weddingDate), "d MMMM yyyy");
+      const d = parseISO(couple.weddingDate);
+      if (isNaN(d.getTime())) return couple.weddingDate;
+      return format(d, "d MMMM yyyy", { locale: dateLocale });
     } catch {
       return couple.weddingDate;
     }
@@ -55,7 +61,7 @@ export function Footer({ couple }: FooterProps) {
           gap: 6,
         }}
       >
-        Made with <Heart size={14} style={{ color: "var(--color-rose)" }} /> just for you.
+        {t("footer.madeWith")} <Heart size={14} style={{ color: "var(--color-rose)" }} /> {t("footer.justForYou")}
       </div>
     </footer>
   );

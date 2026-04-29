@@ -5,6 +5,7 @@ import { format, parseISO } from "date-fns";
 import { Hearts } from "./Hearts";
 import { Petals } from "./Petals";
 import { CoupleIllustration } from "./CoupleIllustration";
+import { useLocale } from "@/lib/i18n";
 import type { CoupleInfo } from "@/lib/types";
 import styles from "./Hero.module.css";
 
@@ -14,10 +15,12 @@ interface HeroProps {
 
 export function Hero({ couple }: HeroProps) {
   const [target, setTarget] = useState<Date | null>(null);
+  const { t, dateLocale } = useLocale();
 
   useEffect(() => {
     try {
-      setTarget(parseISO(couple.weddingDate));
+      const d = parseISO(couple.weddingDate);
+      setTarget(isNaN(d.getTime()) ? new Date() : d);
     } catch {
       setTarget(new Date());
     }
@@ -25,7 +28,7 @@ export function Hero({ couple }: HeroProps) {
 
   const formattedDate = (() => {
     if (!target) return couple.weddingDate;
-    try { return format(target, "EEEE, d MMMM yyyy"); } catch { return couple.weddingDate; }
+    try { return format(target, "EEEE, d MMMM yyyy", { locale: dateLocale }); } catch { return couple.weddingDate; }
   })();
 
   const usePhoto = couple.heroImageUrl && couple.heroImageUrl.trim().length > 0;
@@ -44,7 +47,7 @@ export function Hero({ couple }: HeroProps) {
       <Petals count={10} />
 
       <div className={styles.inner}>
-        <p className={styles.tagline}>{couple.tagline || "The Wedding Of"}</p>
+        <p className={styles.tagline}>{couple.tagline || t("hero.tagline")}</p>
 
         <div className={styles.namesStack}>
           <span className={styles.name}>{couple.bride}</span>
@@ -59,11 +62,11 @@ export function Hero({ couple }: HeroProps) {
         </div>
 
         <a className={`btn ${styles.cta}`} href="#rsvp">
-          Confirm Attendance
+          {t("hero.confirmAttendance")}
         </a>
       </div>
 
-      <div className={styles.scroll}>Scroll</div>
+      <div className={styles.scroll}>{t("hero.scroll")}</div>
     </section>
   );
 }

@@ -1,7 +1,10 @@
+"use client";
+
 import { Clock, Coffee, Heart, Music, Sparkles, Utensils, Users, Sunset } from "lucide-react";
 import type { ProgramEntry } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
+import { useLocale } from "@/lib/i18n";
 import styles from "./Program.module.css";
 
 interface ProgramProps {
@@ -11,13 +14,14 @@ interface ProgramProps {
 const ICONS = [Users, Heart, Coffee, Utensils, Music, Sparkles, Sunset, Clock];
 
 export function Program({ entries }: ProgramProps) {
+  const { t } = useLocale();
   return (
     <section className={`section ${styles.section}`} id="program">
       <div className="container">
         <Reveal>
-          <span className="section-eyebrow">The Schedule</span>
-          <h2 className="section-title">Day Program</h2>
-          <p className="section-subtitle">A glimpse of what we have prepared for you on our special day.</p>
+          <span className="section-eyebrow">{t("program.eyebrow")}</span>
+          <h2 className="section-title">{t("program.title")}</h2>
+          <p className="section-subtitle">{t("program.subtitle")}</p>
           <Ornament />
         </Reveal>
 

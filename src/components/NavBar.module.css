@@ -69,6 +69,31 @@
   color: var(--color-text-muted);
 }
 
+.langOpt {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 2px 4px;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+
+.langOpt:hover {
+  color: var(--color-rose-dark);
+}
+
+.langActive {
+  color: var(--color-rose-dark);
+  font-weight: 600;
+}
+
+.langSep {
+  opacity: 0.5;
+}
+
 .toggle {
   display: none;
   background: transparent;

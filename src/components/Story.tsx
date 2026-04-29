@@ -1,6 +1,9 @@
+"use client";
+
 import type { StoryEntry } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
+import { useLocale } from "@/lib/i18n";
 import styles from "./Story.module.css";
 
 interface StoryProps {
@@ -22,12 +25,13 @@ function FloralMarker() {
 }
 
 export function Story({ entries }: StoryProps) {
+  const { t } = useLocale();
   return (
     <section className={`section ${styles.section}`} id="story">
       <div className="container">
         <Reveal>
-          <span className="section-eyebrow">Our Journey</span>
-          <h2 className="section-title">Our Love Story</h2>
+          <span className="section-eyebrow">{t("story.eyebrow")}</span>
+          <h2 className="section-title">{t("story.title")}</h2>
           <Ornament />
         </Reveal>
 

@@ -2,6 +2,7 @@
 
 import type { AttireGuide } from "@/lib/types";
 import { Reveal } from "./Reveal";
+import { useLocale } from "@/lib/i18n";
 import styles from "./Attire.module.css";
 
 interface AttireProps {
@@ -23,6 +24,7 @@ function DressIcon() {
 }
 
 export function Attire({ attire }: AttireProps) {
+  const { t } = useLocale();
   if (!attire || !attire.title) return null;
 
   return (
@@ -33,14 +35,14 @@ export function Attire({ attire }: AttireProps) {
             <div className={styles.icon}>
               <DressIcon />
             </div>
-            <p className="section-eyebrow">Dress Code</p>
+            <p className="section-eyebrow">{t("attire.eyebrow")}</p>
             <h2 className="section-title">{attire.title}</h2>
             <p className={styles.description}>{attire.description}</p>
 
             {attire.colorsToAvoid?.length > 0 && (
               <>
                 <span className={styles.colorsLabel}>
-                  {attire.colorsToAvoidLabel || "Colours to Avoid"}
+                  {attire.colorsToAvoidLabel || t("attire.colorsToAvoid")}
                 </span>
                 <div className={styles.swatches}>
                   {attire.colorsToAvoid.map((c) => (

@@ -6,6 +6,7 @@ import { Calendar, MapPin, Navigation } from "lucide-react";
 import type { CoupleInfo, EventVenue } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Hearts } from "./Hearts";
+import { useLocale } from "@/lib/i18n";
 import styles from "./SaveTheDate.module.css";
 
 interface SaveTheDateProps {
@@ -131,37 +132,38 @@ function buildIcsBlobUrl(opts: {
 export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
   const [target, setTarget] = useState<Date | null>(null);
   const [parts, setParts] = useState<CountdownParts>({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const { t, dateLocale } = useLocale();
 
   useEffect(() => {
-    let t: Date;
+    let nextTarget: Date;
     try {
-      t = parseISO(couple.weddingDate);
-      if (isNaN(t.getTime())) t = new Date();
+      nextTarget = parseISO(couple.weddingDate);
+      if (isNaN(nextTarget.getTime())) nextTarget = new Date();
     } catch {
-      t = new Date();
+      nextTarget = new Date();
     }
-    setTarget(t);
-    setParts(getParts(t));
-    const id = setInterval(() => setParts(getParts(t)), 1000);
+    setTarget(nextTarget);
+    setParts(getParts(nextTarget));
+    const id = setInterval(() => setParts(getParts(nextTarget)), 1000);
     return () => clearInterval(id);
   }, [couple.weddingDate]);
 
-  const safeFormat = (d: Date | null, pattern: string) => {
+  const safeFormat = (d: Date | null, pattern: string, locale?: typeof dateLocale) => {
     if (!d || isNaN(d.getTime())) return "";
     try {
-      return format(d, pattern);
+      return format(d, pattern, locale ? { locale } : undefined);
     } catch {
       return "";
     }
   };
 
-  const monthLabel = safeFormat(target, "MMMM").toUpperCase();
+  const monthLabel = safeFormat(target, "MMMM", dateLocale).toUpperCase();
   const day = Number(safeFormat(target, "d")) || 0;
   const dayPrev = day > 1 ? day - 1 : "";
   const dayNext = day > 0 ? day + 1 : "";
-  const weekday = safeFormat(target, "EEEE");
+  const weekday = safeFormat(target, "EEEE", dateLocale);
 
-  const eventTitle = `${couple.bride} & ${couple.groom} — Wedding`;
+  const eventTitle = t("std.eventTitle", { bride: couple.bride, groom: couple.groom });
   const ceremonyDate = (() => {
     if (!target) return new Date();
     const [hh = "16", mm = "00"] = (ceremony.time || "16:00").split(":");
@@ -175,7 +177,7 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
     start: ceremonyDate,
     durationHours: 6,
     location: `${ceremony.name}, ${ceremony.addressLine1} ${ceremony.addressLine2}`.trim(),
-    details: ceremony.description || "Join us for our wedding celebration.",
+    details: ceremony.description || t("std.defaultDetails"),
   };
 
   const googleUrl = buildGoogleCalendarUrl(calendarOpts);
@@ -201,7 +203,7 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
       <div className="container">
         <Reveal>
           <div className={styles.inner}>
-            <p className="section-eyebrow">Save The Date</p>
+            <p className="section-eyebrow">{t("std.eyebrow")}</p>
 
             <div className={styles.dateRow}>
               <span className={styles.sideDay}>{dayPrev}</span>
@@ -215,34 +217,34 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
             <p className={styles.month}>{monthLabel}</p>
             <p className={styles.weekday}>{weekday}</p>
 
-            <p className={styles.subline}>Counting hours till forever begins</p>
+            <p className={styles.subline}>{t("std.subline")}</p>
 
-            <div className={styles.countdown} aria-label="Countdown">
+            <div className={styles.countdown} aria-label={t("std.countdownLabel")}>
               {([
-                ["Month", parts.months],
-                ["Days", parts.days],
-                ["Hours", parts.hours],
-                ["Minutes", parts.minutes],
+                [t("std.countdown.month"), parts.months],
+                [t("std.countdown.days"), parts.days],
+                [t("std.countdown.hours"), parts.hours],
+                [t("std.countdown.minutes"), parts.minutes],
               ] as const).slice(0, 4).map(([label, value]) => (
                 <div key={label} className={styles.timeBox}>
                   <div className={styles.timeNum}>{String(value).padStart(2, "0")}</div>
-                  <span className={styles.timeLabel}>{label.toLowerCase()}</span>
+                  <span className={styles.timeLabel}>{label}</span>
                 </div>
               ))}
             </div>
 
-            <p className={styles.calLabel}>Add the celebration to your calendar</p>
+            <p className={styles.calLabel}>{t("std.calLabel")}</p>
             <div className={styles.calButtons}>
               <a className="btn" href={googleUrl} target="_blank" rel="noopener noreferrer">
-                <Calendar size={16} /> Google Calendar
+                <Calendar size={16} /> {t("std.googleCalendar")}
               </a>
               <button className="btn" type="button" onClick={handleAppleCalendar}>
-                <Calendar size={16} /> Apple Calendar
+                <Calendar size={16} /> {t("std.appleCalendar")}
               </button>
             </div>
 
             <div className={styles.findWay}>
-              <p className="section-eyebrow">Find Your Way</p>
+              <p className="section-eyebrow">{t("std.findYourWay")}</p>
               <p className={styles.address}>
                 {ceremony.name}
                 <br />
@@ -252,10 +254,10 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
               </p>
               <div className={styles.mapLinks}>
                 <a className="btn" href={ceremony.mapUrl} target="_blank" rel="noopener noreferrer">
-                  <MapPin size={16} /> Google Maps
+                  <MapPin size={16} /> {t("std.googleMaps")}
                 </a>
                 <a className="btn btn-rose" href={wazeUrl} target="_blank" rel="noopener noreferrer">
-                  <Navigation size={16} /> Waze
+                  <Navigation size={16} /> {t("std.waze")}
                 </a>
               </div>
             </div>

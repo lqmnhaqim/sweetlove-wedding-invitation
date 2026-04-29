@@ -1,7 +1,10 @@
+"use client";
+
 import { Calendar, MapPin, Shirt } from "lucide-react";
 import type { DressCode, EventVenue } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
+import { useLocale } from "@/lib/i18n";
 import styles from "./EventDetails.module.css";
 
 interface EventDetailsProps {
@@ -10,15 +13,14 @@ interface EventDetailsProps {
 }
 
 export function EventDetails({ ceremony, dressCode }: EventDetailsProps) {
+  const { t } = useLocale();
   return (
     <section className={`section ${styles.section}`} id="event">
       <div className="container">
         <Reveal>
-          <span className="section-eyebrow">Join Us</span>
-          <h2 className="section-title">Event Details</h2>
-          <p className="section-subtitle">
-            We can't wait to celebrate this special day with you. Here's everything you need to know.
-          </p>
+          <span className="section-eyebrow">{t("event.eyebrow")}</span>
+          <h2 className="section-title">{t("event.title")}</h2>
+          <p className="section-subtitle">{t("event.subtitle")}</p>
           <Ornament />
         </Reveal>
 
@@ -32,10 +34,10 @@ export function EventDetails({ ceremony, dressCode }: EventDetailsProps) {
             <p className={styles.description}>{ceremony.description}</p>
             <div className={styles.actions}>
               <a className="btn btn-outline" href={ceremony.mapUrl} target="_blank" rel="noopener noreferrer">
-                <MapPin size={16} /> Open in Maps
+                <MapPin size={16} /> {t("event.openInMaps")}
               </a>
               <a className="btn btn-outline" href={ceremony.calendarUrl} target="_blank" rel="noopener noreferrer">
-                <Calendar size={16} /> Add to Calendar
+                <Calendar size={16} /> {t("event.addToCalendar")}
               </a>
             </div>
           </Reveal>
@@ -43,7 +45,7 @@ export function EventDetails({ ceremony, dressCode }: EventDetailsProps) {
           <Reveal className={styles.card} delay={160}>
             <h3 className={styles.title}>
               <Shirt size={18} style={{ display: "inline-block", marginRight: 8, color: "var(--color-rose-dark)" }} />
-              Dress Code
+              {t("event.dressCode")}
             </h3>
             <p className={styles.dressBig}>{dressCode.title}</p>
             <p className={styles.description}>{dressCode.description}</p>
