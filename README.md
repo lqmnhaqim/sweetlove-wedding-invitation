@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sweet & Love — Wedding Invitation
+
+A warm, elegant wedding invitation web app. Built as a reusable template — every piece of content is editable from a built-in admin page.
+
+Inspired by the visual style of [SweetLove Theme](https://sweetlove-theme.thedigitalinvite.com/) (dusty rose / cream palette, serif typography, scroll-fade animations). All markup, CSS, and copy in this repo are written from scratch and use placeholder content.
+
+## Tech Stack
+
+- **Next.js 16** (App Router) with **React 19** and **TypeScript**
+- **Plain CSS** + CSS Modules (no Tailwind)
+- **Zod** for form validation
+- **Lucide React** for icons
+- **date-fns** for date formatting + countdown
+- **xlsx** for exporting RSVP responses
+- **localStorage** for content persistence and RSVP storage (no backend required)
+- **ESLint** for linting
+
+## Features
+
+- Animated envelope cover with wax-seal monogram entry screen
+- Hero with names, date, live countdown, and CTA
+- "Our Love Story" timeline (alternating left/right)
+- "Day Program" schedule with iconography
+- Gifts section with reveal IBAN + copy-to-clipboard
+- Event Details (ceremony info, dress code, map + calendar links)
+- RSVP form with Zod validation; submissions stored in localStorage
+- Travel & Accommodation section (hotels, transit, things to do, contact)
+- Floating petal animation, scroll-fade reveals, sticky navigation
+- `/admin` page (PIN-gated) to edit every piece of content live, manage RSVP responses, and export them to Excel
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The admin page is at <http://localhost:3000/admin>. Default PIN: `1234` (change it from the Settings tab).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Useful Scripts
 
-## Learn More
+```bash
+npm run dev     # Start the development server
+npm run build   # Build for production
+npm run start   # Run the production server
+npm run lint    # Lint the project
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├─ app/
+│  ├─ admin/       # Admin page (content + RSVP management)
+│  ├─ globals.css  # Design tokens, base styles, animations
+│  ├─ layout.tsx   # Root layout with fonts
+│  └─ page.tsx     # Main invitation page
+├─ components/      # Cover, NavBar, Hero, Story, Program, Gifts, EventDetails, Rsvp, Travel, Footer, Reveal, Petals, Ornament
+└─ lib/             # types, defaults, schemas, store (localStorage hooks)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Reusing the Template
 
-## Deploy on Vercel
+1. Visit `/admin`, sign in with PIN `1234`
+2. Edit the couple, story, program, gifts, event, travel, and settings tabs
+3. Click **Save Changes** — content is persisted in your browser's localStorage
+4. Use **RSVPs** tab to view and export responses; **Reset** to restore defaults
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To swap localStorage for a real backend later, only `src/lib/store.ts` needs changing.

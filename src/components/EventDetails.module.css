@@ -1,0 +1,70 @@
+.section {
+  background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-soft) 100%);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 28px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 280ms ease, transform 280ms ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2.4vw, 1.8rem);
+  margin-bottom: 6px;
+  font-weight: 400;
+}
+
+.time {
+  font-family: var(--font-script);
+  color: var(--color-rose-dark);
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-bottom: 18px;
+}
+
+.venueName {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.address {
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.description {
+  color: var(--color-text-muted);
+  margin: 18px 0;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.dressBig {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 2.6vw, 2rem);
+  margin-bottom: 12px;
+}

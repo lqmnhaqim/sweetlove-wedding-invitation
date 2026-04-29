@@ -1,0 +1,169 @@
+.cover {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at top, #f8e8de 0%, transparent 60%),
+    radial-gradient(ellipse at bottom, #efd9c9 0%, transparent 60%),
+    linear-gradient(135deg, #f3e3d6 0%, #e8d2c2 50%, #d9bfae 100%);
+  transition: opacity 800ms ease, transform 800ms ease;
+}
+
+.cover.dismissed {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+}
+
+.envelope {
+  position: relative;
+  width: min(640px, 88vw);
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(ellipse at center, #faecdf 0%, #ecd2bd 70%, #d6b297 100%);
+  border-radius: 14px;
+  box-shadow:
+    0 50px 120px rgba(58, 46, 42, 0.25),
+    0 12px 32px rgba(58, 46, 42, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  overflow: visible;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg);
+  transition: transform 1100ms cubic-bezier(0.6, 0, 0.4, 1);
+}
+
+.envelope::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 8px),
+    repeating-linear-gradient(-45deg, rgba(58,46,42,0.04) 0 2px, transparent 2px 8px);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+/* Diagonal flap lines */
+.flapLeft, .flapRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  pointer-events: none;
+}
+
+.flapLeft {
+  left: 0;
+  background: linear-gradient(135deg, transparent 49.6%, rgba(120, 80, 60, 0.18) 49.7%, rgba(120, 80, 60, 0.18) 50%, transparent 50.1%);
+}
+
+.flapRight {
+  right: 0;
+  background: linear-gradient(45deg, transparent 49.6%, rgba(120, 80, 60, 0.18) 49.7%, rgba(120, 80, 60, 0.18) 50%, transparent 50.1%);
+}
+
+.seal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 38%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #e3a9a0 0%, #c98c80 45%, #9d6357 100%);
+  box-shadow:
+    0 20px 40px rgba(74, 32, 22, 0.35),
+    inset 0 -8px 18px rgba(74, 32, 22, 0.45),
+    inset 0 8px 18px rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--font-script);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 0 rgba(74, 32, 22, 0.35), 0 -1px 0 rgba(255,255,255,0.35);
+  animation: sealPulse 3.6s ease-in-out infinite;
+}
+
+.seal::before {
+  content: "";
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.55);
+}
+
+.seal::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 60%, rgba(74, 32, 22, 0.15) 75%, transparent 85%);
+  pointer-events: none;
+}
+
+@keyframes sealPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.025); }
+}
+
+.coverContent {
+  position: absolute;
+  inset: auto 0 -88px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.eyebrow {
+  font-family: var(--font-script);
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  color: var(--color-rose-dark);
+}
+
+.invited {
+  font-size: 0.78rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.openBtn {
+  margin-top: 8px;
+  background: var(--color-text);
+  border: none;
+  color: #fff;
+  padding: 14px 36px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 250ms ease, transform 250ms ease, box-shadow 250ms ease;
+  box-shadow: 0 12px 28px rgba(58, 46, 42, 0.25);
+}
+
+.openBtn:hover {
+  background: var(--color-rose-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(58, 46, 42, 0.3);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.envelope {
+  animation: float 6s ease-in-out infinite;
+}
+
+@media (max-width: 540px) {
+  .coverContent { inset: auto 0 -110px 0; }
+}
