@@ -92,6 +92,15 @@ function buildGoogleCalendarUrl(opts: {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+// RFC 5545: backslash, semicolon, and comma must be escaped; newlines become \n.
+function escapeIcsText(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r\n|\r|\n/g, "\\n");
+}
+
 function buildIcsBlobUrl(opts: {
   title: string;
   start: Date;
@@ -110,9 +119,9 @@ function buildIcsBlobUrl(opts: {
     `DTSTAMP:${fmt(new Date())}`,
     `DTSTART:${fmt(opts.start)}`,
     `DTEND:${fmt(end)}`,
-    `SUMMARY:${opts.title}`,
-    `DESCRIPTION:${opts.details}`,
-    `LOCATION:${opts.location}`,
+    `SUMMARY:${escapeIcsText(opts.title)}`,
+    `DESCRIPTION:${escapeIcsText(opts.details)}`,
+    `LOCATION:${escapeIcsText(opts.location)}`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
