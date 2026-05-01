@@ -165,8 +165,11 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
 
   const monthLabel = safeFormat(target, "MMMM", dateLocale).toUpperCase();
   const day = Number(safeFormat(target, "d")) || 0;
+  const lastDayOfMonth = target && !isNaN(target.getTime())
+    ? new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate()
+    : 0;
   const dayPrev = day > 1 ? day - 1 : "";
-  const dayNext = day > 0 ? day + 1 : "";
+  const dayNext = day > 0 && day < lastDayOfMonth ? day + 1 : "";
   const weekday = safeFormat(target, "EEEE", dateLocale);
 
   const eventTitle = t("std.eventTitle", { bride: couple.bride, groom: couple.groom });
@@ -227,7 +230,7 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
 
             <div className={styles.countdown} aria-label={t("std.countdownLabel")}>
               {([
-                [t("std.countdown.month"), parts.months],
+                [t("std.countdown.months"), parts.months],
                 [t("std.countdown.days"), parts.days],
                 [t("std.countdown.hours"), parts.hours],
                 [t("std.countdown.minutes"), parts.minutes],
