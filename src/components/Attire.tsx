@@ -2,7 +2,7 @@
 
 import type { AttireGuide } from "@/lib/types";
 import { Reveal } from "./Reveal";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, tx } from "@/lib/i18n";
 import styles from "./Attire.module.css";
 
 interface AttireProps {
@@ -24,8 +24,12 @@ function DressIcon() {
 }
 
 export function Attire({ attire }: AttireProps) {
-  const { t } = useLocale();
-  if (!attire || !attire.title) return null;
+  const { t, locale } = useLocale();
+  const title = tx(attire.title, locale);
+  const description = tx(attire.description, locale);
+  const colorsLabel = tx(attire.colorsToAvoidLabel, locale);
+  const note = tx(attire.note, locale);
+  if (!attire || !title) return null;
 
   return (
     <section className={styles.section} id="attire">
@@ -36,30 +40,33 @@ export function Attire({ attire }: AttireProps) {
               <DressIcon />
             </div>
             <p className="section-eyebrow">{t("attire.eyebrow")}</p>
-            <h2 className="section-title">{attire.title}</h2>
-            <p className={styles.description}>{attire.description}</p>
+            <h2 className="section-title">{title}</h2>
+            <p className={styles.description}>{description}</p>
 
             {attire.colorsToAvoid?.length > 0 && (
               <>
                 <span className={styles.colorsLabel}>
-                  {attire.colorsToAvoidLabel || t("attire.colorsToAvoid")}
+                  {colorsLabel || t("attire.colorsToAvoid")}
                 </span>
                 <div className={styles.swatches}>
-                  {attire.colorsToAvoid.map((c) => (
-                    <div key={c.id} className={styles.swatch}>
-                      <span
-                        className={styles.swatchDot}
-                        style={{ backgroundColor: c.hex }}
-                        aria-label={c.name}
-                      />
-                      <span className={styles.swatchName}>{c.name}</span>
-                    </div>
-                  ))}
+                  {attire.colorsToAvoid.map((c) => {
+                    const name = tx(c.name, locale);
+                    return (
+                      <div key={c.id} className={styles.swatch}>
+                        <span
+                          className={styles.swatchDot}
+                          style={{ backgroundColor: c.hex }}
+                          aria-label={name}
+                        />
+                        <span className={styles.swatchName}>{name}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </>
             )}
 
-            {attire.note && <p className={styles.note}>{attire.note}</p>}
+            {note && <p className={styles.note}>{note}</p>}
           </div>
         </Reveal>
       </div>

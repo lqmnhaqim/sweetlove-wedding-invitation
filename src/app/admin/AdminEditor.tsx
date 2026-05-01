@@ -5,6 +5,7 @@ import { Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import type {
   Hotel,
   InvitationContent,
+  LocalizedText,
   ProgramEntry,
   StoryEntry,
 } from "@/lib/types";
@@ -31,6 +32,61 @@ function move<T>(arr: T[], from: number, to: number): T[] {
   return next;
 }
 
+/** Normalize a LocalizedText to an editable {en, ms} pair. */
+function toPair(value: LocalizedText | undefined | null): { en: string; ms: string } {
+  if (value == null) return { en: "", ms: "" };
+  if (typeof value === "string") return { en: value, ms: value };
+  return { en: value.en ?? "", ms: value.ms ?? "" };
+}
+
+interface LocalizedFieldProps {
+  label: string;
+  value: LocalizedText | undefined | null;
+  onChange: (next: { en: string; ms: string }) => void;
+  rows?: number;
+  placeholder?: string;
+}
+
+/**
+ * Side-by-side English + Malay inputs for a translatable text field.
+ * Always stores as `{en, ms}` object; renders a single row if `rows=1` else textareas.
+ */
+function LocalizedField({ label, value, onChange, rows, placeholder }: LocalizedFieldProps) {
+  const pair = toPair(value);
+  const multi = rows && rows > 1;
+  const InputEl = multi ? "textarea" : "input";
+
+  return (
+    <div className="form-field" style={{ marginTop: 12 }}>
+      <label>{label}</label>
+      <div className={styles.localizedRow}>
+        <div className={styles.localizedCell}>
+          <span className={styles.localizedFlag}>EN</span>
+          <InputEl
+            rows={multi ? rows : undefined}
+            value={pair.en}
+            placeholder={placeholder}
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+              onChange({ ...pair, en: e.target.value })
+            }
+          />
+        </div>
+        <div className={styles.localizedCell}>
+          <span className={styles.localizedFlag}>MS</span>
+          <InputEl
+            rows={multi ? rows : undefined}
+            value={pair.ms}
+            placeholder={placeholder}
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+              onChange({ ...pair, ms: e.target.value })
+            }
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AdminEditor({ tab, draft, setDraft }: AdminEditorProps) {
   if (tab === "couple") return <CoupleEditor draft={draft} setDraft={setDraft} />;
   if (tab === "story") return <StoryEditor draft={draft} setDraft={setDraft} />;
@@ -49,7 +105,10 @@ function CoupleEditor({ draft, setDraft }: EditorProps) {
   const updR = (patch: Partial<typeof r>) => setDraft({ ...draft, reception: { ...r, ...patch } });
   return (
     <div className={styles.panel}>
-      <div className={styles.panelHeader}><h2>Couple & Date</h2></div>
+      <div className={styles.panelHeader}><h2>Couple &amp; Date</h2></div>
+      <p className="muted" style={{ fontSize: "0.85rem", marginBottom: 12 }}>
+        Fields with EN + MS pairs show the English version when the site language is English, and the Malay version when set to Malay.
+      </p>
       <div className={styles.grid2}>
         <div className="form-field">
           <label>Bride / Partner 1 (display name)</label>
@@ -60,20 +119,8 @@ function CoupleEditor({ draft, setDraft }: EditorProps) {
           <input value={c.groom} onChange={(e) => upd({ groom: e.target.value })} />
         </div>
         <div className="form-field">
-          <label>Bride full name (Wedding Reception card)</label>
-          <input value={c.brideFullName} onChange={(e) => upd({ brideFullName: e.target.value })} />
-        </div>
-        <div className="form-field">
-          <label>Groom full name (Wedding Reception card)</label>
-          <input value={c.groomFullName} onChange={(e) => upd({ groomFullName: e.target.value })} />
-        </div>
-        <div className="form-field">
           <label>Monogram</label>
           <input value={c.monogram} onChange={(e) => upd({ monogram: e.target.value })} />
-        </div>
-        <div className="form-field">
-          <label>Tagline (Hero eyebrow)</label>
-          <input value={c.tagline} onChange={(e) => upd({ tagline: e.target.value })} />
         </div>
         <div className="form-field">
           <label>Wedding Date</label>
@@ -84,6 +131,23 @@ function CoupleEditor({ draft, setDraft }: EditorProps) {
           <input type="date" value={c.rsvpDeadline} onChange={(e) => upd({ rsvpDeadline: e.target.value })} />
         </div>
       </div>
+
+      <LocalizedField
+        label="Bride full name (Wedding Reception card)"
+        value={c.brideFullName}
+        onChange={(next) => upd({ brideFullName: next })}
+      />
+      <LocalizedField
+        label="Groom full name (Wedding Reception card)"
+        value={c.groomFullName}
+        onChange={(next) => upd({ groomFullName: next })}
+      />
+      <LocalizedField
+        label="Tagline (Hero eyebrow)"
+        value={c.tagline}
+        onChange={(next) => upd({ tagline: next })}
+      />
+
       <div className="form-field" style={{ marginTop: 16 }}>
         <label>Hero Background Image URL (optional)</label>
         <input
@@ -98,20 +162,22 @@ function CoupleEditor({ draft, setDraft }: EditorProps) {
       </div>
 
       <h3 style={{ marginTop: 28, marginBottom: 12 }}>Wedding Reception Card</h3>
-      <div className={styles.grid2}>
-        <div className="form-field">
-          <label>Bride&apos;s parents</label>
-          <input value={r.brideParents} onChange={(e) => updR({ brideParents: e.target.value })} />
-        </div>
-        <div className="form-field">
-          <label>Groom&apos;s parents</label>
-          <input value={r.groomParents} onChange={(e) => updR({ groomParents: e.target.value })} />
-        </div>
-      </div>
-      <div className="form-field" style={{ marginTop: 12 }}>
-        <label>Greeting / Invitation message</label>
-        <textarea rows={3} value={r.greeting} onChange={(e) => updR({ greeting: e.target.value })} />
-      </div>
+      <LocalizedField
+        label="Bride's parents"
+        value={r.brideParents}
+        onChange={(next) => updR({ brideParents: next })}
+      />
+      <LocalizedField
+        label="Groom's parents"
+        value={r.groomParents}
+        onChange={(next) => updR({ groomParents: next })}
+      />
+      <LocalizedField
+        label="Greeting / Invitation message"
+        rows={3}
+        value={r.greeting}
+        onChange={(next) => updR({ greeting: next })}
+      />
     </div>
   );
 }
@@ -129,7 +195,12 @@ function StoryEditor({ draft, setDraft }: EditorProps) {
           onClick={() =>
             setStory([
               ...draft.story,
-              { id: genId("story"), year: "Year", title: "New Chapter", body: "" },
+              {
+                id: genId("story"),
+                year: "Year",
+                title: { en: "New Chapter", ms: "Bab Baru" },
+                body: { en: "", ms: "" },
+              },
             ])
           }
         >
@@ -137,44 +208,46 @@ function StoryEditor({ draft, setDraft }: EditorProps) {
         </button>
       </div>
 
-      {draft.story.map((entry, idx) => (
-        <div key={entry.id} className={styles.itemCard}>
-          <div className={styles.itemHeader}>
-            <span className={styles.itemTitle}>{entry.year} — {entry.title || "Untitled"}</span>
-            <div className={styles.barActions}>
-              <button type="button" className={styles.iconBtn} aria-label="Move up"
-                onClick={() => setStory(move(draft.story, idx, idx - 1))}>
-                <ChevronUp size={16} />
-              </button>
-              <button type="button" className={styles.iconBtn} aria-label="Move down"
-                onClick={() => setStory(move(draft.story, idx, idx + 1))}>
-                <ChevronDown size={16} />
-              </button>
-              <button type="button" className={`${styles.iconBtn} ${styles.danger}`} aria-label="Delete"
-                onClick={() => setStory(draft.story.filter((_, i) => i !== idx))}>
-                <Trash2 size={16} />
-              </button>
+      {draft.story.map((entry, idx) => {
+        const titlePreview = toPair(entry.title).en;
+        return (
+          <div key={entry.id} className={styles.itemCard}>
+            <div className={styles.itemHeader}>
+              <span className={styles.itemTitle}>{entry.year} — {titlePreview || "Untitled"}</span>
+              <div className={styles.barActions}>
+                <button type="button" className={styles.iconBtn} aria-label="Move up"
+                  onClick={() => setStory(move(draft.story, idx, idx - 1))}>
+                  <ChevronUp size={16} />
+                </button>
+                <button type="button" className={styles.iconBtn} aria-label="Move down"
+                  onClick={() => setStory(move(draft.story, idx, idx + 1))}>
+                  <ChevronDown size={16} />
+                </button>
+                <button type="button" className={`${styles.iconBtn} ${styles.danger}`} aria-label="Delete"
+                  onClick={() => setStory(draft.story.filter((_, i) => i !== idx))}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
-          </div>
-          <div className={styles.grid2}>
             <div className="form-field">
               <label>Year</label>
               <input value={entry.year}
                 onChange={(e) => setStory(draft.story.map((s, i) => i === idx ? { ...s, year: e.target.value } : s))} />
             </div>
-            <div className="form-field">
-              <label>Title</label>
-              <input value={entry.title}
-                onChange={(e) => setStory(draft.story.map((s, i) => i === idx ? { ...s, title: e.target.value } : s))} />
-            </div>
+            <LocalizedField
+              label="Title"
+              value={entry.title}
+              onChange={(next) => setStory(draft.story.map((s, i) => i === idx ? { ...s, title: next } : s))}
+            />
+            <LocalizedField
+              label="Body"
+              rows={3}
+              value={entry.body}
+              onChange={(next) => setStory(draft.story.map((s, i) => i === idx ? { ...s, body: next } : s))}
+            />
           </div>
-          <div className="form-field">
-            <label>Body</label>
-            <textarea rows={3} value={entry.body}
-              onChange={(e) => setStory(draft.story.map((s, i) => i === idx ? { ...s, body: e.target.value } : s))} />
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -186,39 +259,45 @@ function ProgramEditor({ draft, setDraft }: EditorProps) {
       <div className={styles.panelHeader}>
         <h2>Day Program</h2>
         <button type="button" className="btn btn-outline"
-          onClick={() => setProgram([...draft.program, { id: genId("p"), time: "12:00", title: "New Step", description: "" }])}>
+          onClick={() => setProgram([...draft.program, {
+            id: genId("p"),
+            time: "12:00",
+            title: { en: "New Step", ms: "Acara Baru" },
+            description: { en: "", ms: "" },
+          }])}>
           <Plus size={16} /> Add Step
         </button>
       </div>
-      {draft.program.map((entry, idx) => (
-        <div key={entry.id} className={styles.itemCard}>
-          <div className={styles.itemHeader}>
-            <span className={styles.itemTitle}>{entry.time} — {entry.title}</span>
-            <div className={styles.barActions}>
-              <button type="button" className={styles.iconBtn} onClick={() => setProgram(move(draft.program, idx, idx - 1))} aria-label="Move up"><ChevronUp size={16} /></button>
-              <button type="button" className={styles.iconBtn} onClick={() => setProgram(move(draft.program, idx, idx + 1))} aria-label="Move down"><ChevronDown size={16} /></button>
-              <button type="button" className={`${styles.iconBtn} ${styles.danger}`} onClick={() => setProgram(draft.program.filter((_, i) => i !== idx))} aria-label="Delete"><Trash2 size={16} /></button>
+      {draft.program.map((entry, idx) => {
+        const titlePreview = toPair(entry.title).en;
+        return (
+          <div key={entry.id} className={styles.itemCard}>
+            <div className={styles.itemHeader}>
+              <span className={styles.itemTitle}>{entry.time} — {titlePreview}</span>
+              <div className={styles.barActions}>
+                <button type="button" className={styles.iconBtn} onClick={() => setProgram(move(draft.program, idx, idx - 1))} aria-label="Move up"><ChevronUp size={16} /></button>
+                <button type="button" className={styles.iconBtn} onClick={() => setProgram(move(draft.program, idx, idx + 1))} aria-label="Move down"><ChevronDown size={16} /></button>
+                <button type="button" className={`${styles.iconBtn} ${styles.danger}`} onClick={() => setProgram(draft.program.filter((_, i) => i !== idx))} aria-label="Delete"><Trash2 size={16} /></button>
+              </div>
             </div>
-          </div>
-          <div className={styles.grid2}>
             <div className="form-field">
               <label>Time</label>
               <input value={entry.time}
                 onChange={(e) => setProgram(draft.program.map((p, i) => i === idx ? { ...p, time: e.target.value } : p))} />
             </div>
-            <div className="form-field">
-              <label>Title</label>
-              <input value={entry.title}
-                onChange={(e) => setProgram(draft.program.map((p, i) => i === idx ? { ...p, title: e.target.value } : p))} />
-            </div>
+            <LocalizedField
+              label="Title"
+              value={entry.title}
+              onChange={(next) => setProgram(draft.program.map((p, i) => i === idx ? { ...p, title: next } : p))}
+            />
+            <LocalizedField
+              label="Description"
+              value={entry.description}
+              onChange={(next) => setProgram(draft.program.map((p, i) => i === idx ? { ...p, description: next } : p))}
+            />
           </div>
-          <div className="form-field">
-            <label>Description</label>
-            <input value={entry.description}
-              onChange={(e) => setProgram(draft.program.map((p, i) => i === idx ? { ...p, description: e.target.value } : p))} />
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -229,28 +308,35 @@ function GiftEditor({ draft, setDraft }: EditorProps) {
   return (
     <div className={styles.panel}>
       <div className={styles.panelHeader}><h2>Gifts</h2></div>
-      <div className="form-field">
-        <label>Intro</label>
-        <textarea rows={3} value={g.intro} onChange={(e) => upd({ intro: e.target.value })} />
-      </div>
+      <LocalizedField
+        label="Intro"
+        rows={3}
+        value={g.intro}
+        onChange={(next) => upd({ intro: next })}
+      />
       <div className={styles.grid2} style={{ marginTop: 16 }}>
-        <div className="form-field">
-          <label>Contribution Label</label>
-          <input value={g.contributionLabel} onChange={(e) => upd({ contributionLabel: e.target.value })} />
-        </div>
         <div className="form-field">
           <label>IBAN / Account</label>
           <input value={g.iban} onChange={(e) => upd({ iban: e.target.value })} />
         </div>
       </div>
-      <div className="form-field" style={{ marginTop: 16 }}>
-        <label>Contribution Description</label>
-        <textarea rows={2} value={g.contributionDescription} onChange={(e) => upd({ contributionDescription: e.target.value })} />
-      </div>
-      <div className="form-field" style={{ marginTop: 16 }}>
-        <label>Bank Note</label>
-        <textarea rows={2} value={g.bankNote} onChange={(e) => upd({ bankNote: e.target.value })} />
-      </div>
+      <LocalizedField
+        label="Contribution Label"
+        value={g.contributionLabel}
+        onChange={(next) => upd({ contributionLabel: next })}
+      />
+      <LocalizedField
+        label="Contribution Description"
+        rows={2}
+        value={g.contributionDescription}
+        onChange={(next) => upd({ contributionDescription: next })}
+      />
+      <LocalizedField
+        label="Bank Note"
+        rows={2}
+        value={g.bankNote}
+        onChange={(next) => upd({ bankNote: next })}
+      />
     </div>
   );
 }
@@ -263,52 +349,36 @@ function EventEditor({ draft, setDraft }: EditorProps) {
   return (
     <div className={styles.panel}>
       <div className={styles.panelHeader}><h2>Event Details</h2></div>
+
       <div className={styles.grid2}>
-        <div className="form-field">
-          <label>Title</label>
-          <input value={ev.title} onChange={(e) => updEv({ title: e.target.value })} />
-        </div>
         <div className="form-field">
           <label>Time</label>
           <input value={ev.time} onChange={(e) => updEv({ time: e.target.value })} />
-        </div>
-        <div className="form-field">
-          <label>Venue Name</label>
-          <input value={ev.name} onChange={(e) => updEv({ name: e.target.value })} />
         </div>
         <div className="form-field">
           <label>Map URL</label>
           <input value={ev.mapUrl} onChange={(e) => updEv({ mapUrl: e.target.value })} />
         </div>
         <div className="form-field">
-          <label>Address Line 1</label>
-          <input value={ev.addressLine1} onChange={(e) => updEv({ addressLine1: e.target.value })} />
-        </div>
-        <div className="form-field">
-          <label>Address Line 2</label>
-          <input value={ev.addressLine2} onChange={(e) => updEv({ addressLine2: e.target.value })} />
-        </div>
-        <div className="form-field">
           <label>Calendar URL</label>
           <input value={ev.calendarUrl} onChange={(e) => updEv({ calendarUrl: e.target.value })} />
         </div>
       </div>
-      <div className="form-field" style={{ marginTop: 16 }}>
-        <label>Description</label>
-        <textarea rows={3} value={ev.description} onChange={(e) => updEv({ description: e.target.value })} />
-      </div>
+
+      <LocalizedField label="Title" value={ev.title} onChange={(next) => updEv({ title: next })} />
+      <LocalizedField label="Venue Name" value={ev.name} onChange={(next) => updEv({ name: next })} />
+      <LocalizedField label="Address Line 1" value={ev.addressLine1} onChange={(next) => updEv({ addressLine1: next })} />
+      <LocalizedField label="Address Line 2" value={ev.addressLine2} onChange={(next) => updEv({ addressLine2: next })} />
+      <LocalizedField
+        label="Description"
+        rows={3}
+        value={ev.description}
+        onChange={(next) => updEv({ description: next })}
+      />
 
       <h3 style={{ marginTop: 28, marginBottom: 12 }}>Dress Code</h3>
-      <div className={styles.grid2}>
-        <div className="form-field">
-          <label>Title</label>
-          <input value={dc.title} onChange={(e) => updDc({ title: e.target.value })} />
-        </div>
-        <div className="form-field">
-          <label>Description</label>
-          <input value={dc.description} onChange={(e) => updDc({ description: e.target.value })} />
-        </div>
-      </div>
+      <LocalizedField label="Title" value={dc.title} onChange={(next) => updDc({ title: next })} />
+      <LocalizedField label="Description" value={dc.description} onChange={(next) => updDc({ description: next })} />
 
       <AttireFields draft={draft} setDraft={setDraft} />
     </div>
@@ -323,24 +393,10 @@ function AttireFields({ draft, setDraft }: EditorProps) {
   return (
     <>
       <h3 style={{ marginTop: 28, marginBottom: 12 }}>Attire Guide (extended)</h3>
-      <div className={styles.grid2}>
-        <div className="form-field">
-          <label>Title</label>
-          <input value={a.title} onChange={(e) => upd({ title: e.target.value })} />
-        </div>
-        <div className="form-field">
-          <label>Colours-to-avoid label</label>
-          <input value={a.colorsToAvoidLabel} onChange={(e) => upd({ colorsToAvoidLabel: e.target.value })} />
-        </div>
-      </div>
-      <div className="form-field" style={{ marginTop: 12 }}>
-        <label>Description</label>
-        <textarea rows={2} value={a.description} onChange={(e) => upd({ description: e.target.value })} />
-      </div>
-      <div className="form-field" style={{ marginTop: 12 }}>
-        <label>Note (shown in dashed box)</label>
-        <textarea rows={3} value={a.note} onChange={(e) => upd({ note: e.target.value })} />
-      </div>
+      <LocalizedField label="Title" value={a.title} onChange={(next) => upd({ title: next })} />
+      <LocalizedField label="Colours-to-avoid label" value={a.colorsToAvoidLabel} onChange={(next) => upd({ colorsToAvoidLabel: next })} />
+      <LocalizedField label="Description" rows={2} value={a.description} onChange={(next) => upd({ description: next })} />
+      <LocalizedField label="Note (shown in dashed box)" rows={3} value={a.note} onChange={(next) => upd({ note: next })} />
 
       <div style={{ marginTop: 16 }}>
         <div className={styles.panelHeader}>
@@ -351,7 +407,7 @@ function AttireFields({ draft, setDraft }: EditorProps) {
             onClick={() =>
               updColors([
                 ...a.colorsToAvoid,
-                { id: genId("c"), name: "New Colour", hex: "#888888" },
+                { id: genId("c"), name: { en: "New Colour", ms: "Warna Baru" }, hex: "#888888" },
               ])
             }
           >
@@ -360,29 +416,25 @@ function AttireFields({ draft, setDraft }: EditorProps) {
         </div>
         {a.colorsToAvoid.map((c, idx) => (
           <div key={c.id} className={styles.itemCard}>
-            <div className={styles.grid2}>
-              <div className="form-field">
-                <label>Name</label>
-                <input
-                  value={c.name}
-                  onChange={(e) => {
-                    const next = [...a.colorsToAvoid];
-                    next[idx] = { ...c, name: e.target.value };
-                    updColors(next);
-                  }}
-                />
-              </div>
-              <div className="form-field">
-                <label>Hex (e.g. #2f4a1e)</label>
-                <input
-                  value={c.hex}
-                  onChange={(e) => {
-                    const next = [...a.colorsToAvoid];
-                    next[idx] = { ...c, hex: e.target.value };
-                    updColors(next);
-                  }}
-                />
-              </div>
+            <LocalizedField
+              label="Name"
+              value={c.name}
+              onChange={(next) => {
+                const arr = [...a.colorsToAvoid];
+                arr[idx] = { ...c, name: next };
+                updColors(arr);
+              }}
+            />
+            <div className="form-field">
+              <label>Hex (e.g. #2f4a1e)</label>
+              <input
+                value={c.hex}
+                onChange={(e) => {
+                  const next = [...a.colorsToAvoid];
+                  next[idx] = { ...c, hex: e.target.value };
+                  updColors(next);
+                }}
+              />
             </div>
             <div className={styles.barActions} style={{ marginTop: 8 }}>
               <span
@@ -416,78 +468,96 @@ function TravelEditor({ draft, setDraft }: EditorProps) {
   const t = draft.travel;
   const upd = (patch: Partial<typeof t>) => setDraft({ ...draft, travel: { ...t, ...patch } });
   const setHotels = (hotels: Hotel[]) => upd({ hotels });
-  const [thingsRaw, setThingsRaw] = useState(t.thingsToDo.join(", "));
+
+  // Things To Do: two separate comma-separated inputs (EN and MS).
+  const initialEn = t.thingsToDo.map((x) => toPair(x).en).join(", ");
+  const initialMs = t.thingsToDo.map((x) => toPair(x).ms).join(", ");
+  const [thingsEnRaw, setThingsEnRaw] = useState(initialEn);
+  const [thingsMsRaw, setThingsMsRaw] = useState(initialMs);
   useEffect(() => {
-    // Only sync from external changes (e.g. Reset). Skip when the parent array
-    // already matches what the current raw input would parse to — otherwise the
-    // input strips trailing commas/whitespace as the user types.
-    const parsed = thingsRaw.split(",").map((s) => s.trim()).filter(Boolean);
-    const same =
-      parsed.length === t.thingsToDo.length &&
-      parsed.every((v, i) => v === t.thingsToDo[i]);
-    if (!same) setThingsRaw(t.thingsToDo.join(", "));
+    const newEn = t.thingsToDo.map((x) => toPair(x).en).join(", ");
+    const newMs = t.thingsToDo.map((x) => toPair(x).ms).join(", ");
+    if (newEn !== thingsEnRaw) setThingsEnRaw(newEn);
+    if (newMs !== thingsMsRaw) setThingsMsRaw(newMs);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t.thingsToDo]);
+
+  const commitThings = (enRaw: string, msRaw: string) => {
+    const ens = enRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    const mss = msRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    const count = Math.max(ens.length, mss.length);
+    const next: LocalizedText[] = [];
+    for (let i = 0; i < count; i++) {
+      next.push({ en: ens[i] ?? "", ms: mss[i] ?? ens[i] ?? "" });
+    }
+    upd({ thingsToDo: next });
+  };
 
   return (
     <div className={styles.panel}>
       <div className={styles.panelHeader}>
-        <h2>Travel & Accommodation</h2>
+        <h2>Travel &amp; Accommodation</h2>
         <button type="button" className="btn btn-outline"
-          onClick={() => setHotels([...t.hotels, { id: genId("h"), name: "New Hotel", rating: "4 Star", distance: "10 minutes from venue", note: "" }])}>
+          onClick={() => setHotels([...t.hotels, {
+            id: genId("h"),
+            name: { en: "New Hotel", ms: "Hotel Baru" },
+            rating: { en: "4 Star", ms: "4 Bintang" },
+            distance: { en: "10 minutes from venue", ms: "10 minit dari lokasi majlis" },
+            note: { en: "", ms: "" },
+          }])}>
           <Plus size={16} /> Add Hotel
         </button>
       </div>
 
-      {t.hotels.map((h, idx) => (
-        <div key={h.id} className={styles.itemCard}>
-          <div className={styles.itemHeader}>
-            <span className={styles.itemTitle}>{h.name}</span>
-            <div className={styles.barActions}>
-              <button type="button" className={styles.iconBtn} onClick={() => setHotels(move(t.hotels, idx, idx - 1))} aria-label="Move up"><ChevronUp size={16} /></button>
-              <button type="button" className={styles.iconBtn} onClick={() => setHotels(move(t.hotels, idx, idx + 1))} aria-label="Move down"><ChevronDown size={16} /></button>
-              <button type="button" className={`${styles.iconBtn} ${styles.danger}`} onClick={() => setHotels(t.hotels.filter((_, i) => i !== idx))} aria-label="Delete"><Trash2 size={16} /></button>
+      {t.hotels.map((h, idx) => {
+        const namePreview = toPair(h.name).en;
+        const setField = (patch: Partial<Hotel>) => setHotels(t.hotels.map((x, i) => i === idx ? { ...x, ...patch } : x));
+        return (
+          <div key={h.id} className={styles.itemCard}>
+            <div className={styles.itemHeader}>
+              <span className={styles.itemTitle}>{namePreview}</span>
+              <div className={styles.barActions}>
+                <button type="button" className={styles.iconBtn} onClick={() => setHotels(move(t.hotels, idx, idx - 1))} aria-label="Move up"><ChevronUp size={16} /></button>
+                <button type="button" className={styles.iconBtn} onClick={() => setHotels(move(t.hotels, idx, idx + 1))} aria-label="Move down"><ChevronDown size={16} /></button>
+                <button type="button" className={`${styles.iconBtn} ${styles.danger}`} onClick={() => setHotels(t.hotels.filter((_, i) => i !== idx))} aria-label="Delete"><Trash2 size={16} /></button>
+              </div>
             </div>
+            <LocalizedField label="Name" value={h.name} onChange={(next) => setField({ name: next })} />
+            <LocalizedField label="Rating" value={h.rating} onChange={(next) => setField({ rating: next })} />
+            <LocalizedField label="Distance" value={h.distance} onChange={(next) => setField({ distance: next })} />
+            <LocalizedField label="Note" value={h.note} onChange={(next) => setField({ note: next })} />
           </div>
-          <div className={styles.grid2}>
-            <div className="form-field">
-              <label>Name</label>
-              <input value={h.name} onChange={(e) => setHotels(t.hotels.map((x, i) => i === idx ? { ...x, name: e.target.value } : x))} />
-            </div>
-            <div className="form-field">
-              <label>Rating</label>
-              <input value={h.rating} onChange={(e) => setHotels(t.hotels.map((x, i) => i === idx ? { ...x, rating: e.target.value } : x))} />
-            </div>
-            <div className="form-field">
-              <label>Distance</label>
-              <input value={h.distance} onChange={(e) => setHotels(t.hotels.map((x, i) => i === idx ? { ...x, distance: e.target.value } : x))} />
-            </div>
-            <div className="form-field">
-              <label>Note</label>
-              <input value={h.note} onChange={(e) => setHotels(t.hotels.map((x, i) => i === idx ? { ...x, note: e.target.value } : x))} />
-            </div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
 
       <h3 style={{ marginTop: 28, marginBottom: 12 }}>Travel Info</h3>
-      <div className="form-field">
-        <label>By Air</label>
-        <textarea rows={2} value={t.byAir} onChange={(e) => upd({ byAir: e.target.value })} />
-      </div>
+      <LocalizedField label="By Air" rows={2} value={t.byAir} onChange={(next) => upd({ byAir: next })} />
+      <LocalizedField label="By Car" rows={2} value={t.byCar} onChange={(next) => upd({ byCar: next })} />
+
       <div className="form-field" style={{ marginTop: 16 }}>
-        <label>By Car</label>
-        <textarea rows={2} value={t.byCar} onChange={(e) => upd({ byCar: e.target.value })} />
-      </div>
-      <div className="form-field" style={{ marginTop: 16 }}>
-        <label>Things to Do (comma separated)</label>
-        <input
-          value={thingsRaw}
-          onChange={(e) => {
-            setThingsRaw(e.target.value);
-            upd({ thingsToDo: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) });
-          }}
-        />
+        <label>Things to Do (comma separated — EN / MS pair items by position)</label>
+        <div className={styles.localizedRow}>
+          <div className={styles.localizedCell}>
+            <span className={styles.localizedFlag}>EN</span>
+            <input
+              value={thingsEnRaw}
+              onChange={(e) => {
+                setThingsEnRaw(e.target.value);
+                commitThings(e.target.value, thingsMsRaw);
+              }}
+            />
+          </div>
+          <div className={styles.localizedCell}>
+            <span className={styles.localizedFlag}>MS</span>
+            <input
+              value={thingsMsRaw}
+              onChange={(e) => {
+                setThingsMsRaw(e.target.value);
+                commitThings(thingsEnRaw, e.target.value);
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       <div className={styles.grid2} style={{ marginTop: 16 }}>

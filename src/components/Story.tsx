@@ -3,7 +3,7 @@
 import type { StoryEntry } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, tx } from "@/lib/i18n";
 import styles from "./Story.module.css";
 
 interface StoryProps {
@@ -25,7 +25,7 @@ function FloralMarker() {
 }
 
 export function Story({ entries }: StoryProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   return (
     <section className={`section ${styles.section}`} id="story">
       <div className="container">
@@ -44,8 +44,8 @@ export function Story({ entries }: StoryProps) {
                   <FloralMarker />
                 </span>
                 <span className={styles.year}>{entry.year}</span>
-                <h3 className={styles.title}>{entry.title}</h3>
-                <p className={styles.body}>{entry.body}</p>
+                <h3 className={styles.title}>{tx(entry.title, locale)}</h3>
+                <p className={styles.body}>{tx(entry.body, locale)}</p>
               </Reveal>
             );
           })}

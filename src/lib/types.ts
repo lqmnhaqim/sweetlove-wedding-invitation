@@ -1,83 +1,93 @@
+import type { LocalizedText } from "./i18n";
+
+export type { LocalizedText } from "./i18n";
+
 export type Locale = "en" | "fr";
 
 export interface CoupleInfo {
   bride: string;
   groom: string;
-  brideFullName: string;
-  groomFullName: string;
+  brideFullName: LocalizedText;
+  groomFullName: LocalizedText;
   monogram: string;
   weddingDate: string;
   rsvpDeadline: string;
-  tagline: string;
+  tagline: LocalizedText;
   heroImageUrl: string;
 }
 
 export interface WeddingReception {
-  brideParents: string;
-  groomParents: string;
-  greeting: string;
+  brideParents: LocalizedText;
+  groomParents: LocalizedText;
+  greeting: LocalizedText;
+}
+
+export interface AttireColor {
+  id: string;
+  name: LocalizedText;
+  hex: string;
 }
 
 export interface AttireGuide {
-  title: string;
-  description: string;
-  colorsToAvoidLabel: string;
-  colorsToAvoid: { id: string; name: string; hex: string }[];
-  note: string;
+  title: LocalizedText;
+  description: LocalizedText;
+  colorsToAvoidLabel: LocalizedText;
+  colorsToAvoid: AttireColor[];
+  note: LocalizedText;
 }
 
 export interface StoryEntry {
   id: string;
   year: string;
-  title: string;
-  body: string;
+  title: LocalizedText;
+  body: LocalizedText;
 }
 
 export interface ProgramEntry {
   id: string;
   time: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
 }
 
 export interface EventVenue {
-  title: string;
+  title: LocalizedText;
   time: string;
-  name: string;
-  addressLine1: string;
-  addressLine2: string;
-  description: string;
+  name: LocalizedText;
+  addressLine1: LocalizedText;
+  addressLine2: LocalizedText;
+  description: LocalizedText;
   mapUrl: string;
   calendarUrl: string;
 }
 
 export interface DressCode {
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
 }
 
 export interface Hotel {
   id: string;
-  name: string;
-  rating: string;
-  distance: string;
-  note: string;
+  name: LocalizedText;
+  rating: LocalizedText;
+  distance: LocalizedText;
+  note: LocalizedText;
 }
 
 export interface TravelInfo {
   hotels: Hotel[];
-  byAir: string;
-  byCar: string;
-  thingsToDo: string[];
+  byAir: LocalizedText;
+  byCar: LocalizedText;
+  thingsToDo: LocalizedText[];
   contactEmail: string;
   contactPhone: string;
 }
 
 export interface GiftInfo {
-  intro: string;
-  contributionLabel: string;
-  contributionDescription: string;
-  bankNote: string;
+  intro: LocalizedText;
+  contributionLabel: LocalizedText;
+  contributionDescription: LocalizedText;
+  bankNote: LocalizedText;
   iban: string;
 }
 

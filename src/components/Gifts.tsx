@@ -5,7 +5,7 @@ import { Gift, Wallet, Copy, Check } from "lucide-react";
 import type { GiftInfo } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, tx } from "@/lib/i18n";
 import styles from "./Gifts.module.css";
 
 interface GiftsProps {
@@ -15,7 +15,7 @@ interface GiftsProps {
 export function Gifts({ gift }: GiftsProps) {
   const [showIban, setShowIban] = useState(false);
   const [copied, setCopied] = useState(false);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   const handleCopy = async () => {
     try {
@@ -34,20 +34,20 @@ export function Gifts({ gift }: GiftsProps) {
           <span className="section-eyebrow">{t("gifts.eyebrow")}</span>
           <h2 className="section-title">{t("gifts.title")}</h2>
           <Ornament />
-          <p className={styles.intro}>{gift.intro}</p>
+          <p className={styles.intro}>{tx(gift.intro, locale)}</p>
         </Reveal>
 
         <div className={styles.cards}>
           <Reveal className={styles.card} delay={80}>
             <span className={styles.icon}><Gift size={22} /></span>
-            <h3 className={styles.label}>{gift.contributionLabel}</h3>
-            <p className={styles.desc}>{gift.contributionDescription}</p>
+            <h3 className={styles.label}>{tx(gift.contributionLabel, locale)}</h3>
+            <p className={styles.desc}>{tx(gift.contributionDescription, locale)}</p>
           </Reveal>
 
           <Reveal className={styles.card} delay={160}>
             <span className={styles.icon}><Wallet size={22} /></span>
             <h3 className={styles.label}>{t("gifts.bankTransfer")}</h3>
-            <p className={styles.desc}>{gift.bankNote}</p>
+            <p className={styles.desc}>{tx(gift.bankNote, locale)}</p>
 
             {!showIban ? (
               <button type="button" className="btn btn-outline" onClick={() => setShowIban(true)}>

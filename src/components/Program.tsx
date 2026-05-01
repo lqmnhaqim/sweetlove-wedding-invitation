@@ -4,7 +4,7 @@ import { Clock, Coffee, Heart, Music, Sparkles, Utensils, Users, Sunset } from "
 import type { ProgramEntry } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, tx } from "@/lib/i18n";
 import styles from "./Program.module.css";
 
 interface ProgramProps {
@@ -14,7 +14,7 @@ interface ProgramProps {
 const ICONS = [Users, Heart, Coffee, Utensils, Music, Sparkles, Sunset, Clock];
 
 export function Program({ entries }: ProgramProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   return (
     <section className={`section ${styles.section}`} id="program">
       <div className="container">
@@ -39,8 +39,8 @@ export function Program({ entries }: ProgramProps) {
                     <Icon size={18} />
                   </span>
                   <div className={styles.body}>
-                    <h3>{entry.title}</h3>
-                    <p>{entry.description}</p>
+                    <h3>{tx(entry.title, locale)}</h3>
+                    <p>{tx(entry.description, locale)}</p>
                   </div>
                 </div>
               </Reveal>

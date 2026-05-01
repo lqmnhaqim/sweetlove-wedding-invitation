@@ -236,6 +236,33 @@ export function getLocale(): Locale {
   return readStoredLocale();
 }
 
+/**
+ * A translatable content field. Either a single string (legacy / untranslated)
+ * or an object with per-locale variants. `tx()` resolves it for a given locale
+ * and falls back to EN if the locale value is missing.
+ */
+export type LocalizedText = string | { en: string; ms: string };
+
+export function tx(value: LocalizedText | undefined | null, locale: Locale): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  return value[locale] || value.en || "";
+}
+
+/** Build a LocalizedText from two strings. */
+export function lt(en: string, ms: string): { en: string; ms: string } {
+  return { en, ms };
+}
+
+/** Resolve an array of LocalizedText entries against the active locale. */
+export function txList(
+  values: LocalizedText[] | undefined | null,
+  locale: Locale,
+): string[] {
+  if (!values) return [];
+  return values.map((v) => tx(v, locale));
+}
+
 export function translate(locale: Locale, key: string, vars?: Record<string, string | number>): string {
   const dict = dictionaries[locale] ?? dictionaries.en;
   let value = dict[key] ?? dictionaries.en[key] ?? key;

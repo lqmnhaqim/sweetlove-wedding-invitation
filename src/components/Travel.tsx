@@ -4,7 +4,7 @@ import { Building2, Car, Mail, MapPinned, Phone, Plane, Sparkles } from "lucide-
 import type { TravelInfo } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Ornament } from "./Ornament";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, tx } from "@/lib/i18n";
 import styles from "./Travel.module.css";
 
 interface TravelProps {
@@ -12,7 +12,7 @@ interface TravelProps {
 }
 
 export function Travel({ travel }: TravelProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   return (
     <section className={`section ${styles.section}`} id="travel">
       <div className="container">
@@ -30,10 +30,10 @@ export function Travel({ travel }: TravelProps) {
             </h3>
             {travel.hotels.map((h) => (
               <div key={h.id} className={styles.hotelCard}>
-                <div className={styles.hotelName}>{h.name}</div>
-                <span className={styles.rating}>{h.rating}</span>
-                <div className={styles.distance}>{h.distance}</div>
-                <div className={styles.note}>{h.note}</div>
+                <div className={styles.hotelName}>{tx(h.name, locale)}</div>
+                <span className={styles.rating}>{tx(h.rating, locale)}</span>
+                <div className={styles.distance}>{tx(h.distance, locale)}</div>
+                <div className={styles.note}>{tx(h.note, locale)}</div>
               </div>
             ))}
           </Reveal>
@@ -44,19 +44,20 @@ export function Travel({ travel }: TravelProps) {
             </h3>
             <div className={styles.travelBlock}>
               <h4><Plane size={16} /> {t("travel.byAir")}</h4>
-              <p>{travel.byAir}</p>
+              <p>{tx(travel.byAir, locale)}</p>
             </div>
             <div className={styles.travelBlock}>
               <h4><Car size={16} /> {t("travel.byCar")}</h4>
-              <p>{travel.byCar}</p>
+              <p>{tx(travel.byCar, locale)}</p>
             </div>
             <div className={styles.travelBlock}>
               <h4><Sparkles size={16} /> {t("travel.thingsToDo")}</h4>
               <p>{t("travel.thingsToDoIntro")}</p>
               <ul className={styles.list}>
-                {travel.thingsToDo.map((thing) => (
-                  <li key={thing}>{thing}</li>
-                ))}
+                {travel.thingsToDo.map((thing, i) => {
+                  const label = tx(thing, locale);
+                  return <li key={`${i}-${label}`}>{label}</li>;
+                })}
               </ul>
             </div>
 

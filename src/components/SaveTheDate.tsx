@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { format, parseISO, intervalToDuration } from "date-fns";
 import { Calendar, MapPin, Navigation } from "lucide-react";
 import type { CoupleInfo, EventVenue } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Hearts } from "./Hearts";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, tx } from "@/lib/i18n";
 import styles from "./SaveTheDate.module.css";
 
 interface SaveTheDateProps {
@@ -38,17 +38,19 @@ function getParts(target: Date): CountdownParts {
 }
 
 function HeartFrameSvg() {
+  const rawId = useId();
+  const gradId = `stdHeartFill-${rawId.replace(/:/g, "")}`;
   return (
     <svg viewBox="0 0 220 220" aria-hidden="true">
       <defs>
-        <radialGradient id="stdHeartFill" cx="50%" cy="40%" r="60%">
+        <radialGradient id={gradId} cx="50%" cy="40%" r="60%">
           <stop offset="0%" stopColor="#fbe4dc" />
           <stop offset="100%" stopColor="#f3c5b3" />
         </radialGradient>
       </defs>
       <path
         d="M110 200 C 30 150, 12 90, 36 56 C 60 28, 96 30, 110 64 C 124 30, 160 28, 184 56 C 208 90, 190 150, 110 200 Z"
-        fill="url(#stdHeartFill)"
+        fill={`url(#${gradId})`}
         stroke="#8c1d1d"
         strokeWidth="3"
         strokeLinejoin="round"
@@ -132,7 +134,11 @@ function buildIcsBlobUrl(opts: {
 export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
   const [target, setTarget] = useState<Date | null>(null);
   const [parts, setParts] = useState<CountdownParts>({ months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const { t, dateLocale } = useLocale();
+  const { t, dateLocale, locale } = useLocale();
+  const ceremonyName = tx(ceremony.name, locale);
+  const ceremonyAddr1 = tx(ceremony.addressLine1, locale);
+  const ceremonyAddr2 = tx(ceremony.addressLine2, locale);
+  const ceremonyDescription = tx(ceremony.description, locale);
 
   useEffect(() => {
     let nextTarget: Date;
@@ -176,8 +182,8 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
     title: eventTitle,
     start: ceremonyDate,
     durationHours: 6,
-    location: `${ceremony.name}, ${ceremony.addressLine1} ${ceremony.addressLine2}`.trim(),
-    details: ceremony.description || t("std.defaultDetails"),
+    location: `${ceremonyName}, ${ceremonyAddr1} ${ceremonyAddr2}`.trim(),
+    details: ceremonyDescription || t("std.defaultDetails"),
   };
 
   const googleUrl = buildGoogleCalendarUrl(calendarOpts);
@@ -192,7 +198,7 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
   };
 
   const wazeUrl = (() => {
-    const q = encodeURIComponent(`${ceremony.name} ${ceremony.addressLine1}`.trim());
+    const q = encodeURIComponent(`${ceremonyName} ${ceremonyAddr1}`.trim());
     return `https://waze.com/ul?q=${q}`;
   })();
 
@@ -246,11 +252,11 @@ export function SaveTheDate({ couple, ceremony }: SaveTheDateProps) {
             <div className={styles.findWay}>
               <p className="section-eyebrow">{t("std.findYourWay")}</p>
               <p className={styles.address}>
-                {ceremony.name}
+                {ceremonyName}
                 <br />
-                {ceremony.addressLine1}
+                {ceremonyAddr1}
                 <br />
-                {ceremony.addressLine2}
+                {ceremonyAddr2}
               </p>
               <div className={styles.mapLinks}>
                 <a className="btn" href={ceremony.mapUrl} target="_blank" rel="noopener noreferrer">

@@ -3,7 +3,7 @@
 import type { CoupleInfo, WeddingReception as WeddingReceptionType } from "@/lib/types";
 import { Reveal } from "./Reveal";
 import { Hearts } from "./Hearts";
-import { useLocale } from "@/lib/i18n";
+import { useLocale, tx } from "@/lib/i18n";
 import styles from "./WeddingReception.module.css";
 
 interface WeddingReceptionProps {
@@ -12,7 +12,12 @@ interface WeddingReceptionProps {
 }
 
 export function WeddingReception({ reception, couple }: WeddingReceptionProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const brideParents = tx(reception.brideParents, locale);
+  const groomParents = tx(reception.groomParents, locale);
+  const greeting = tx(reception.greeting, locale);
+  const brideFullName = tx(couple.brideFullName, locale);
+  const groomFullName = tx(couple.groomFullName, locale);
   return (
     <section className={styles.section} id="reception">
       <Hearts count={10} spread={{ top: 0.05, bottom: 0.95 }} />
@@ -22,18 +27,18 @@ export function WeddingReception({ reception, couple }: WeddingReceptionProps) {
           <div className={styles.card}>
             <p className={styles.eyebrow}>{t("reception.eyebrow")}</p>
 
-            {reception.brideParents && (
-              <p className={styles.parents}>{reception.brideParents}</p>
+            {brideParents && (
+              <p className={styles.parents}>{brideParents}</p>
             )}
-            {reception.brideParents && reception.groomParents && (
+            {brideParents && groomParents && (
               <span className={styles.amp}>&amp;</span>
             )}
-            {reception.groomParents && (
-              <p className={styles.parents}>{reception.groomParents}</p>
+            {groomParents && (
+              <p className={styles.parents}>{groomParents}</p>
             )}
 
-            {reception.greeting && (
-              <p className={styles.greeting}>{reception.greeting}</p>
+            {greeting && (
+              <p className={styles.greeting}>{greeting}</p>
             )}
 
             <div className={styles.divider} aria-hidden="true">
@@ -44,11 +49,11 @@ export function WeddingReception({ reception, couple }: WeddingReceptionProps) {
 
             <div className={styles.couple}>
               <span className={styles.coupleName}>
-                {couple.brideFullName || couple.bride}
+                {brideFullName || couple.bride}
               </span>
               <span className={styles.coupleAmp}>&amp;</span>
               <span className={styles.coupleName}>
-                {couple.groomFullName || couple.groom}
+                {groomFullName || couple.groom}
               </span>
             </div>
           </div>
