@@ -2,7 +2,7 @@ import type { LocalizedText } from "./i18n";
 
 export type { LocalizedText } from "./i18n";
 
-export type Locale = "en" | "fr";
+export type Locale = "en" | "ms";
 
 export interface CoupleInfo {
   bride: string;
