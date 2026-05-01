@@ -1,0 +1,92 @@
+.section {
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(232, 200, 192, 0.5), transparent 50%),
+    var(--color-bg);
+}
+
+.deadline {
+  text-align: center;
+  color: var(--color-text-muted);
+  margin-bottom: 56px;
+  font-style: italic;
+}
+
+.form {
+  max-width: 620px;
+  margin: 0 auto;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-md);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.attendingChoice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.choice {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 0.92rem;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.06em;
+  transition: all 220ms ease;
+}
+
+.choice:hover {
+  background: var(--color-blush);
+  border-color: var(--color-rose-soft);
+  color: var(--color-rose-dark);
+}
+
+.choice.selected {
+  background: var(--color-rose);
+  border-color: var(--color-rose);
+  color: #fff;
+}
+
+.submit {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.successCard {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--color-text);
+}
+
+.successCard h3 {
+  margin: 16px 0 8px;
+  font-family: var(--font-serif);
+}
+
+.successCard p {
+  color: var(--color-text-muted);
+}
+
+.successIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-blush);
+  color: var(--color-rose-dark);
+}

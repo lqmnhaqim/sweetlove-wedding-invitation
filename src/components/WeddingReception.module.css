@@ -1,0 +1,98 @@
+.section {
+  position: relative;
+  padding: var(--section-spacing) 0;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.card {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 72px) clamp(28px, 5vw, 56px);
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  z-index: 2;
+}
+
+.eyebrow {
+  font-family: var(--font-script);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  color: var(--color-text);
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+.parents {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  color: var(--color-text);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.amp {
+  display: block;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--color-rose);
+  margin: 6px 0;
+}
+
+.greeting {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-width: 460px;
+  margin: 24px auto;
+}
+
+.couple {
+  margin: 30px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.coupleName {
+  font-family: var(--font-script);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.coupleAmp {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--color-rose);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px auto 24px;
+  color: var(--color-rose);
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 1px;
+  background: var(--color-line);
+}
+
+.divider svg {
+  width: 18px;
+  height: 18px;
+}
