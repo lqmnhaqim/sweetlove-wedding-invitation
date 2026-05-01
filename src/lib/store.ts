@@ -28,7 +28,9 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 function deepMergeDefaults<T>(defaults: T, stored: unknown): T {
   if (!isPlainObject(defaults) || !isPlainObject(stored)) {
-    return (stored === undefined ? defaults : (stored as T));
+    // Treat null the same as undefined so a `null` field in stored data
+    // doesn't overwrite a non-null default (would crash downstream consumers).
+    return (stored == null ? defaults : (stored as T));
   }
   const out: Record<string, unknown> = { ...defaults };
   for (const key of Object.keys(defaults as Record<string, unknown>)) {

@@ -475,10 +475,19 @@ function TravelEditor({ draft, setDraft }: EditorProps) {
   const [thingsEnRaw, setThingsEnRaw] = useState(initialEn);
   const [thingsMsRaw, setThingsMsRaw] = useState(initialMs);
   useEffect(() => {
-    const newEn = t.thingsToDo.map((x) => toPair(x).en).join(", ");
-    const newMs = t.thingsToDo.map((x) => toPair(x).ms).join(", ");
-    if (newEn !== thingsEnRaw) setThingsEnRaw(newEn);
-    if (newMs !== thingsMsRaw) setThingsMsRaw(newMs);
+    // Only sync from external changes (e.g. Reset). Skip when the parent array
+    // already matches what the current raw inputs would parse to — otherwise
+    // the input strips trailing commas/whitespace as the user types.
+    const parsedEn = thingsEnRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    const parsedMs = thingsMsRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    const sameEn =
+      parsedEn.length === t.thingsToDo.length &&
+      parsedEn.every((v, i) => v === toPair(t.thingsToDo[i]).en);
+    const sameMs =
+      parsedMs.length === t.thingsToDo.length &&
+      parsedMs.every((v, i) => v === toPair(t.thingsToDo[i]).ms);
+    if (!sameEn) setThingsEnRaw(t.thingsToDo.map((x) => toPair(x).en).join(", "));
+    if (!sameMs) setThingsMsRaw(t.thingsToDo.map((x) => toPair(x).ms).join(", "));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t.thingsToDo]);
 
